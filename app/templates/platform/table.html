@@ -67,9 +67,10 @@
                   <div class="modal-body" id="opt-body">
                       <p>This triggers a popover on click.</p>
                       <hr>
-                    <select class="form-select" name="opt" id="opt">
+                      <label for="opt">Selecione</label>
+                      <select class="form-select" name="opt" id="opt">
                         <option selected>vazio</option>
-                    </select>
+                      </select>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Concluído</button>
@@ -185,32 +186,36 @@
     <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"></script>
-     <script>
+
+    <script>
         $('#sortTable').DataTable();
     </script>
+
     <script>
         $('#nav-tab a').on('click', function (e) {
           e.preventDefault()
           $(this).tab('show')
         })
     </script>
+
     <script>
     $(document).ready(function() {
 
-        $("select.treat-selector").selectpicker();
+        var $select = $("select.treat-selector");
+        $select.selectpicker();
 
         // declare global variable to store the initial value of my select
         var initVal;
         var cond = {{ list(options.keys())|tojson }};
 
         // when the select dropdown opens, store the current value in initVal
-        $("select.treat-selector").on('show.bs.select', function () {
+        $select.on('show.bs.select', function () {
             initVal = $(this).val().toString();
             console.log('initial value is ' + initVal);
         });
 
         // when the select dropdown is closed, store the current value in val
-        $("select.treat-selector").on("hide.bs.select", function() {
+        $select.on("hide.bs.select", function() {
             var val = $(this).val().toString();
             console.log('current value is ' + val);
 
@@ -237,6 +242,7 @@
         });
     });
     </script>
+
 {% endblock %}
 
 {% block footer %}

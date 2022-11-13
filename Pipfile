@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 flask = "*"
 pandas = "*"
+numpy = "*"
+pyarrow = "*"
 
 [dev-packages]
 

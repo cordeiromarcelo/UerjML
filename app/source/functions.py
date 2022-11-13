@@ -1,0 +1,118 @@
+import pandas as pd
+import numpy as np
+
+
+class Function:
+    def __init__(self, function, name, category, options=None, description=None):
+        self.function = function
+        self.name = name
+        self.category = category
+        self.options = options
+        self.description = description
+
+    def __call__(self, *args):
+        return self.function(*args)
+
+
+def fill_null(df: pd.DataFrame, columns, value):
+    df = df.copy()
+    fill_dict = {
+        'None': None,
+        'False': False,
+        'True': True,
+        '0': 0,
+        '1': 1,
+        '-1': -1,
+    }
+
+    if not isinstance(columns, list):
+        columns = [columns]
+
+    funcs_dict = {
+        'Media': 'mean',
+        'Moda': 'mode',
+        'Mediana': 'median'
+    }
+
+    if value in fill_dict.keys():
+        df[columns] = df[columns].fillna(fill_dict[value])
+        return df
+
+    if value in funcs_dict.keys():
+        val_dict = dict(eval(f"df[{columns}].{funcs_dict[value]}()"))
+        df[columns] = df[columns].fillna(val_dict)
+        return df
+
+    else:
+        raise Exception("Esse método não pode ser aplicado")
+
+
+def remove_nulls(df: pd.DataFrame, columns, value=None):
+    df = df.copy()
+
+    if not isinstance(columns, list):
+        columns = [columns]
+
+    return df.dropna(subset=columns)
+
+
+def change_type(df: pd.DataFrame, columns, value):
+    df = df.copy()
+    types_dict = {
+        'Inteiro': 'int',
+        'Float': 'float',
+        'Long': 'long',
+        'Booleano': 'boolean',
+        'String(Object)': 'string'
+    }
+
+    df[columns] = df[columns].astype(types_dict[value])
+    return df
+
+
+def select_cols(df, columns, value=None):
+    df = df.copy()
+
+    if not isinstance(columns, list):
+        columns = [columns]
+
+    return df[columns]
+
+
+def remove_cols(df, columns, value=None):
+    df = df.copy()
+
+    if not isinstance(columns, list):
+        columns = [columns]
+
+    return df.drop(columns, axis=1)
+
+
+def round_cols(df, columns, value):
+    df = df.copy()
+
+    if not isinstance(columns, list):
+        columns = [columns]
+
+    df[columns] = df[columns].round(int(value))
+    return df
+
+
+def floor_cols(df, columns, value=None):
+    df = df.copy()
+
+    if not isinstance(columns, list):
+        columns = [columns]
+
+    df[columns] = df[columns].apply(np.floor)
+    return df
+
+
+def ceil_cols(df, columns, value):
+    df = df.copy()
+
+    if not isinstance(columns, list):
+        columns = [columns]
+
+    df[columns] = df[columns].apply(np.ceil)
+    return df
