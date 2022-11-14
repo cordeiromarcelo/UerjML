@@ -43,7 +43,7 @@
                         <div class="card-header font-weight-bold text-primary py-3">
                             <label class="form-label" for="process">Tratamento</label>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body treat-selector">
                             <select class="selectpicker treat-selector" title="Escolha a Função" name="process" id="process" data-live-search="true" data-width="75%" data-dropup-auto="false" data-container="body">
                             <option value="Nenhum">Nenhum</option>
                             {% for key, values in funcs.items() %}
@@ -78,7 +78,8 @@
                 </div>
               </div>
             </div>
-            <button type="submit" value="Submit" class="btn btn-primary mb-3 px-5">Aplicar</button>
+            <button type="submit" value="undo" class="btn btn-secondary mb-3 px-5">Desfazer</button>
+            <button type="submit" value="apply" class="btn btn-success mb-3 px-5">Aplicar</button>
         </form>
     </div>
 {% endblock %}
@@ -181,6 +182,28 @@
 
 {% endblock %}
 
+{% block right %}
+    <div class="row my-auto px-5">
+        <div class="card shadow accordion accordion-flush p-0" id="accordionFlushHelp">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingHelp">
+              <button class="accordion-button collapsed card-header font-weight-bold text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseHelp" aria-expanded="false" aria-controls="flush-collapseHelp">
+                Ajuda <i class="bi bi-info-circle-fill ms-3"></i>
+              </button>
+            </h2>
+            <div id="flush-collapseHelp" class="accordion-collapse collapse" aria-labelledby="flush-headingHelp" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body">
+                  Aqui você encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="row align-self-end mt-2">
+        <button type="submit" value="next" class="btn btn-lg btn-primary mb-3 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
+    </div>
+{% endblock %}
+
 {% block scripts %}
     {{ super() }}
     <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
@@ -232,14 +255,26 @@
                 $("#opt").empty()
 
                 $("#opt-body").find('p').text(dscpt_value)
+                $("#helper").find('p').text(dscpt_value)
 
                 $.each(opt_values, function(value, key) {
                   $("#opt").append($("<option></option>")
                      .attr("value", key).text(key));
                 });
 
+                var $modal_opts = $("#opt");
+                let opt = $modal_opts.val();
+
+                $modal_opts.on("blur", function() {
+                    opt = $(this).val();
+                    console.log(opt)
+                    $("div.treat-selector > button > div > div > div").text(val.concat(" (", opt, ")"))
+                });
+                console.log(opt)
+                $("div.treat-selector > button > div > div > div").text(val.concat(" (", opt, ")"))
             }
         });
+
     });
     </script>
 

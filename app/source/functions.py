@@ -98,21 +98,27 @@ def round_cols(df, columns, value):
     return df
 
 
-def floor_cols(df, columns, value=None):
+def floor_cols(df, columns, value):
     df = df.copy()
+
+    def my_floor(a, precision=0):
+        return np.true_divide(np.floor(a * 10 ** precision), 10 ** precision)
 
     if not isinstance(columns, list):
         columns = [columns]
 
-    df[columns] = df[columns].apply(np.floor)
+    df[columns] = df[columns].apply(my_floor, args=[int(value)])
     return df
 
 
 def ceil_cols(df, columns, value):
     df = df.copy()
 
+    def my_ceil(a, precision=0):
+        return np.round(a + 0.5 * 10 ** (-precision), precision)
+
     if not isinstance(columns, list):
         columns = [columns]
 
-    df[columns] = df[columns].apply(np.ceil)
+    df[columns] = df[columns].apply(my_ceil, args=[int(value)])
     return df
