@@ -21,7 +21,7 @@
 {% block action %}
     <h1 class="display-6 fw-normal">Tratamento de Dados</h1>
     <p class="lead fw-normal">Selecione as colunas para receber o tratamento de sua escolha.</p>
-    <div class="card-body">
+    <div class="card-body" id="form-div">
         <form method="POST" action="" enctype="multipart/form-data">
             <div class="row mb-3">
                 <div class="col">
@@ -44,8 +44,7 @@
                             <label class="form-label" for="process">Tratamento</label>
                         </div>
                         <div class="card-body treat-selector">
-                            <select class="selectpicker treat-selector" title="Escolha a Função" name="process" id="process" data-live-search="true" data-width="75%" data-dropup-auto="false" data-container="body">
-                            <option value="Nenhum">Nenhum</option>
+                            <select class="selectpicker treat-selector" autocomplete="off" title="Escolha a Função" name="process" id="process" data-live-search="true" data-width="75%" data-dropup-auto="false" data-container="body">
                             {% for key, values in funcs.items() %}
                                 <optgroup label="{{key}}">
                                   {% for func in values %}
@@ -78,8 +77,34 @@
                 </div>
               </div>
             </div>
-            <button type="submit" value="undo" class="btn btn-secondary mb-3 px-5">Desfazer</button>
-            <button type="submit" value="apply" class="btn btn-success mb-3 px-5">Aplicar</button>
+            <button type="submit" name="action" value="undo" class="btn btn-secondary mb-3 px-5">Desfazer</button>
+            <button type="submit" name="action" value="apply" class="btn btn-success mb-3 px-5">Aplicar</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block right %}
+    <div class="row my-auto px-lg-5 px-md-0 px-3">
+        <div class="card shadow accordion accordion-flush p-0" id="accordionFlushHelp">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingHelp">
+              <button class="accordion-button collapsed card-header font-weight-bold text-primary"  type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseHelp" aria-expanded="false" aria-controls="flush-collapseHelp">
+                Ajuda <i class="bi bi-info-circle-fill ms-3"
+              data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="left"
+                         title="Aqui você encontrará ajuda com <b>explicações</b> sobre a <br> <code>Função de tratamento</code> selecionada ao lado. <b>Basta escolher uma!</b>"></i>
+              </button>
+            </h2>
+            <div id="flush-collapseHelp" class="accordion-collapse collapse" aria-labelledby="flush-headingHelp" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body" id="accordionHelp">
+                  <p>Aqui você encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="row align-self-end mt-2 me-4">
+        <form method="POST" action="" enctype="multipart/form-data">
+            <button type="submit" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
         </form>
     </div>
 {% endblock %}
@@ -126,6 +151,7 @@
                           <div class="nav nav-tabs" id="nav-tab" role="tablist">
                             <a class="nav-item nav-link font-weight-bold text-primary active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Descrição</a>
                             <a class="nav-item nav-link font-weight-bold text-primary" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Tipos</a>
+                            <a class="nav-item nav-link font-weight-bold text-primary" id="nav-history-tab" data-toggle="tab" href="#nav-history" role="tab" aria-controls="nav-history" aria-selected="false">Histórico</a>
                           </div>
                         </nav>
                     </div>
@@ -174,34 +200,34 @@
                                 </table>
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="nav-history" role="tabpanel" aria-labelledby="nav-history-tab">
+                            <div class="table-responsive text-nowrap">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        {% for col in history_columns %}
+                                        <th>{{col}}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in history_data %}
+                                    <tr>
+                                        {% for col, row_ in zip(dtypes_columns, row) %}
+                                        <td>{{row_}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-{% endblock %}
-
-{% block right %}
-    <div class="row my-auto px-5">
-        <div class="card shadow accordion accordion-flush p-0" id="accordionFlushHelp">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="flush-headingHelp">
-              <button class="accordion-button collapsed card-header font-weight-bold text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseHelp" aria-expanded="false" aria-controls="flush-collapseHelp">
-                Ajuda <i class="bi bi-info-circle-fill ms-3"></i>
-              </button>
-            </h2>
-            <div id="flush-collapseHelp" class="accordion-collapse collapse" aria-labelledby="flush-headingHelp" data-bs-parent="#accordionFlushExample">
-              <div class="accordion-body">
-                  Aqui você encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!
-              </div>
-            </div>
-          </div>
-        </div>
-    </div>
-    <div class="row align-self-end mt-2">
-        <button type="submit" value="next" class="btn btn-lg btn-primary mb-3 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
-    </div>
 {% endblock %}
 
 {% block scripts %}
@@ -224,6 +250,8 @@
     <script>
     $(document).ready(function() {
 
+        $('select.treat-selector').selectpicker('destroy').val('default').selectpicker('update');
+
         var $select = $("select.treat-selector");
         $select.selectpicker();
 
@@ -239,8 +267,14 @@
 
         // when the select dropdown is closed, store the current value in val
         $select.on("hide.bs.select", function() {
-            var val = $(this).val().toString();
+            const val = $(this).val().toString();
             console.log('current value is ' + val);
+
+            let help_json = {{ help_texts|tojson }};
+            if (val !== ''){
+                let text_html = "<code>".concat(val, "</code>: ", help_json[val])
+                $("#accordionHelp").find('p').html(text_html)
+            }
 
             if (cond.includes(val)) {
                 console.log("new");
@@ -253,9 +287,7 @@
                 let dscpt_value = dscpt_json[val];
 
                 $("#opt").empty()
-
                 $("#opt-body").find('p').text(dscpt_value)
-                $("#helper").find('p').text(dscpt_value)
 
                 $.each(opt_values, function(value, key) {
                   $("#opt").append($("<option></option>")
@@ -275,7 +307,19 @@
             }
         });
 
+        const modal_div = $("#form-div");
+        let error_msg = "{{ error_msg }}"
+        if (error_msg !== "Erro: ") {
+            console.log("{{ error_msg }}");
+            modal_div.append($("<p></p>").attr("class", "text-danger").text(error_msg));
+        }
     });
+    </script>
+    <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+})
     </script>
 
 {% endblock %}

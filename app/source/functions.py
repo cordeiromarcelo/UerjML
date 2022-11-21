@@ -3,12 +3,13 @@ import numpy as np
 
 
 class Function:
-    def __init__(self, function, name, category, options=None, description=None):
+    def __init__(self, function, name, category, options=None, description=None, help_txt=''):
         self.function = function
         self.name = name
         self.category = category
         self.options = options
         self.description = description
+        self.help_txt = help_txt
 
     def __call__(self, *args):
         return self.function(*args)
