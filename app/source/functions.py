@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import inspect
 
 
 class Function:
@@ -10,6 +11,10 @@ class Function:
         self.options = options
         self.description = description
         self.help_txt = help_txt
+
+        self.param_required = {}
+        for param, default in inspect.signature(function).parameters.items():
+            self.param_required[param] = '=' not in str(default)
 
     def __call__(self, *args):
         return self.function(*args)

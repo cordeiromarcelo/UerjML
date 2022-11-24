@@ -13,7 +13,7 @@
     <ul id="progressbar">
         <li class="active" id="step1"><strong>Upload de Dados</strong></li>
         <li class="active" id="step2"><strong>Tratamento de Dados</strong></li>
-        <li id="step3"><strong>Step 3</strong></li>
+        <li id="step3"><strong>Treino de Modelo</strong></li>
         <li id="step4"><strong>Step 4</strong></li>
     </ul>
 {% endblock %}
@@ -96,7 +96,7 @@
             </h2>
             <div id="flush-collapseHelp" class="accordion-collapse collapse" aria-labelledby="flush-headingHelp" data-bs-parent="#accordionFlushExample">
               <div class="accordion-body" id="accordionHelp">
-                  <p>Aqui você encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!</p>
+                  <p>Aqui encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!</p>
               </div>
             </div>
           </div>
@@ -104,7 +104,7 @@
     </div>
     <div class="row align-self-end mt-2 me-4">
         <form method="POST" action="" enctype="multipart/form-data">
-            <button type="submit" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
+            <button type="submit" name="action" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
         </form>
     </div>
 {% endblock %}

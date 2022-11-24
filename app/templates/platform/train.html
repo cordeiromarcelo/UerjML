@@ -1,0 +1,329 @@
+
+{% extends "base.html" %}
+{% block title %}Table{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/css/bootstrap-select.min.css">
+{% endblock %}
+
+{% block steps %}
+    <ul id="progressbar">
+        <li class="active" id="step1"><strong>Upload de Dados</strong></li>
+        <li class="active" id="step2"><strong>Tratamento de Dados</strong></li>
+        <li class="active" id="step3"><strong>Treino de Modelo</strong></li>
+        <li id="step4"><strong>Step 4</strong></li>
+    </ul>
+{% endblock %}
+
+{% block action %}
+    <h1 class="display-6 fw-normal">Treino de Modelo</h1>
+    <p class="lead fw-normal">Selecione as colunas para receber o tratamento de sua escolha.</p>
+    <div class="card-body" id="form-div">
+        <form method="POST" action="" enctype="multipart/form-data">
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <label class="form-label font-weight-bold text-primary" for="col">Coluna</label>
+                        </div>
+                        <div class="card-body">
+                            <select class="selectpicker" title="Escolha a(s) Coluna(s)" multiple name="col" id="col" data-actions-box="true" data-live-search="true" data-selected-text-format="count" data-width="75%" data-dropup-auto="false" data-container="body" >
+                                {% for col in column_names %}
+                                <option value="{{col}}">{{col}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow mb-4">
+                        <div class="card-header font-weight-bold text-primary py-3">
+                            <label class="form-label" for="process">Tratamento</label>
+                        </div>
+                        <div class="card-body treat-selector">
+                            <select class="selectpicker treat-selector" autocomplete="off" title="Escolha a Função" name="process" id="process" data-live-search="true" data-width="75%" data-dropup-auto="false" data-container="body">
+                            {% for key, values in funcs.items() %}
+                                <optgroup label="{{key}}">
+                                  {% for func in values %}
+                                    <option value="{{func}}">{{func}}</option>
+                                  {% endfor %}
+                                </optgroup>
+                              {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Condição da Função</h1>
+                  </div>
+                  <div class="modal-body" id="opt-body">
+                      <p>This triggers a popover on click.</p>
+                      <hr>
+                      <label for="opt">Selecione</label>
+                      <select class="form-select" name="opt" id="opt">
+                        <option selected>vazio</option>
+                      </select>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Concluído</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="submit" name="action" value="undo" class="btn btn-secondary mb-3 px-5">Desfazer</button>
+            <button type="submit" name="action" value="apply" class="btn btn-success mb-3 px-5">Aplicar</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block right %}
+    <div class="row my-auto px-lg-5 px-md-0 px-3">
+        <div class="card shadow accordion accordion-flush p-0" id="accordionFlushHelp">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingHelp">
+              <button class="accordion-button collapsed card-header font-weight-bold text-primary"  type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseHelp" aria-expanded="false" aria-controls="flush-collapseHelp">
+                Ajuda <i class="bi bi-info-circle-fill ms-3"
+              data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="left"
+                         title="Aqui você encontrará ajuda com <b>explicações</b> sobre a <br> <code>Função de tratamento</code> selecionada ao lado. <b>Basta escolher uma!</b>"></i>
+              </button>
+            </h2>
+            <div id="flush-collapseHelp" class="accordion-collapse collapse" aria-labelledby="flush-headingHelp" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body" id="accordionHelp">
+                  <p>Aqui você encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="row align-self-end mt-2 me-4">
+        <form method="POST" action="" enctype="multipart/form-data">
+            <button type="submit" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Dados Importados</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive text-nowrap">
+                            <table class="table table-bordered table-hover" id="sortTable">
+                                {% if len(row_data) == 1000 %}
+                                <caption>Somente as primeiras 1000 linhas</caption>
+                                {% endif %}
+                                <thead>
+                                <tr>
+                                    {% for col in column_names %}
+                                    <th>{{col}}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in row_data %}
+                                <tr>
+                                    {% for col, row_ in zip(column_names, row) %}
+                                    <td>{{row_}}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <nav>
+                          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a class="nav-item nav-link font-weight-bold text-primary active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Descrição</a>
+                            <a class="nav-item nav-link font-weight-bold text-primary" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Tipos</a>
+                            <a class="nav-item nav-link font-weight-bold text-primary" id="nav-history-tab" data-toggle="tab" href="#nav-history" role="tab" aria-controls="nav-history" aria-selected="false">Histórico</a>
+                          </div>
+                        </nav>
+                    </div>
+                    <div class="card-body tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                            <div class="table-responsive text-nowrap">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        {% for col in describe_columns %}
+                                        <th>{{col}}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in describe_data %}
+                                    <tr>
+                                        {% for col, row_ in zip(describe_columns, row) %}
+                                        <td>{{row_}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                            <div class="table-responsive text-nowrap">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        {% for col in dtypes_columns %}
+                                        <th>{{col}}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in dtypes_data %}
+                                    <tr>
+                                        {% for col, row_ in zip(dtypes_columns, row) %}
+                                        <td>{{row_}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-history" role="tabpanel" aria-labelledby="nav-history-tab">
+                            <div class="table-responsive text-nowrap">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        {% for col in history_columns %}
+                                        <th>{{col}}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in history_data %}
+                                    <tr>
+                                        {% for col, row_ in zip(dtypes_columns, row) %}
+                                        <td>{{row_}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"></script>
+
+    <script>
+        $('#sortTable').DataTable();
+    </script>
+
+    <script>
+        $('#nav-tab a').on('click', function (e) {
+          e.preventDefault()
+          $(this).tab('show')
+        })
+    </script>
+
+    <script>
+    $(document).ready(function() {
+
+        $('select.treat-selector').selectpicker('destroy').val('default').selectpicker('update');
+
+        var $select = $("select.treat-selector");
+        $select.selectpicker();
+
+        // declare global variable to store the initial value of my select
+        var initVal;
+        var cond = {{ list(options.keys())|tojson }};
+
+        // when the select dropdown opens, store the current value in initVal
+        $select.on('show.bs.select', function () {
+            initVal = $(this).val().toString();
+            console.log('initial value is ' + initVal);
+        });
+
+        // when the select dropdown is closed, store the current value in val
+        $select.on("hide.bs.select", function() {
+            const val = $(this).val().toString();
+            console.log('current value is ' + val);
+
+            let help_json = {{ help_texts|tojson }};
+            if (val !== ''){
+                let text_html = "<code>".concat(val, "</code>: ", help_json[val])
+                $("#accordionHelp").find('p').html(text_html)
+            }
+
+            if (cond.includes(val)) {
+                console.log("new");
+                $('#staticBackdrop').modal('show');
+
+                let opt_json = {{ options|tojson }};
+                let opt_values = opt_json[val];
+
+                let dscpt_json = {{ options_descriptions|tojson }};
+                let dscpt_value = dscpt_json[val];
+
+                $("#opt").empty()
+                $("#opt-body").find('p').text(dscpt_value)
+
+                $.each(opt_values, function(value, key) {
+                  $("#opt").append($("<option></option>")
+                     .attr("value", key).text(key));
+                });
+
+                var $modal_opts = $("#opt");
+                let opt = $modal_opts.val();
+
+                $modal_opts.on("blur", function() {
+                    opt = $(this).val();
+                    console.log(opt)
+                    $("div.treat-selector > button > div > div > div").text(val.concat(" (", opt, ")"))
+                });
+                console.log(opt)
+                $("div.treat-selector > button > div > div > div").text(val.concat(" (", opt, ")"))
+            }
+        });
+
+        const modal_div = $("#form-div");
+        let error_msg = "{{ error_msg }}"
+        if (error_msg !== "Erro: ") {
+            console.log("{{ error_msg }}");
+            modal_div.append($("<p></p>").attr("class", "text-danger").text(error_msg));
+        }
+    });
+    </script>
+    <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+    </script>
+
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+{% endblock %}

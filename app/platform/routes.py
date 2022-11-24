@@ -45,11 +45,11 @@ def uploadFiles():
         raise Exception('O arquivo não possui nome')
 
         # save the file
-    return redirect(url_for('platform.renderTable', filename=filename))
+    return redirect(url_for('platform.renderPreprocessing', filename=filename))
 
 
 @platform.route('/<string:filename>/', methods=['GET', 'POST'])
-def renderTable(filename):
+def renderPreprocessing(filename):
 
     # file paths
     file_path = os.path.join(config.UPLOAD_FOLDER, filename)
@@ -102,6 +102,9 @@ def renderTable(filename):
 
             df = pd.read_parquet(file_path_parquet)
 
+        if request.form.get('action') == "next":
+            return redirect(url_for('platform.renderTrain', filename=filename))
+
     else:
         df = pd.read_parquet(file_path_parquet)
 
@@ -112,7 +115,7 @@ def renderTable(filename):
     dtypes = pd.DataFrame(df.dtypes).reset_index()
     dtypes.columns = ['coluna', 'tipo']
 
-    return render_template("platform/table.html", column_names=df.columns.values,
+    return render_template("platform/preprocessing.html", column_names=df.columns.values,
                            row_data=list(df.values.tolist())[:1000],
                            describe_columns=describe.columns.values,
                            describe_data=list(describe.values.tolist()),
@@ -127,6 +130,38 @@ def renderTable(filename):
                            error_msg=error_msg,
                            zip=zip, len=len, str=str, list=list)
 
-    # return redirect(url_for('platform.renderTableMap', filename=filename,
-    #                         lat_col=request.values['lat'], long_col=request.values['long'],
-    #                         peso_col=request.values['peso']))
+
+@platform.route('/<string:filename>/model', methods=['GET', 'POST'])
+def renderTrain(filename):
+
+    file_path = os.path.join(config.UPLOAD_FOLDER, filename)
+    file_path_parquet = os.path.join(file_path, filename + '.parquet')
+    file_path_history = os.path.join(file_path, 'history.parquet')
+
+    # read history logs
+    history = pd.read_parquet(file_path_history)
+    error_msg = "Erro: "
+
+    df = pd.read_parquet(file_path_parquet)
+
+    # describe information
+    describe = df.describe().reset_index()
+
+    # dtypes information
+    dtypes = pd.DataFrame(df.dtypes).reset_index()
+    dtypes.columns = ['coluna', 'tipo']
+
+    return render_template("platform/train.html", column_names=df.columns.values,
+                           row_data=list(df.values.tolist())[:1000],
+                           describe_columns=describe.columns.values,
+                           describe_data=list(describe.values.tolist()),
+                           dtypes_columns=dtypes.columns.values,
+                           dtypes_data=list(dtypes.values.tolist()),
+                           history_columns=history.columns.values,
+                           history_data=list(history.values.tolist()),
+                           funcs=preprocessing.category_funcs_dict,
+                           options=preprocessing.funcs_options_dict,
+                           options_descriptions=preprocessing.options_descriptions_dict,
+                           help_texts=preprocessing.funcs_helps_dict,
+                           error_msg=error_msg,
+                           zip=zip, len=len, str=str, list=list)
