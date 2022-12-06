@@ -36,7 +36,7 @@ functions_list = [
     f.Function(function=f.round_cols,
                name='Arredondar',
                category='Numérico',
-               options=[str(i) for i in range(10)],
+               options=[],
                description='Selecione a quantidade de casas decimais',
                help_txt="Arredonde uma matriz para o número determinado de decimais."),
 

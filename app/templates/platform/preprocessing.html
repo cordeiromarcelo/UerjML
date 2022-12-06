@@ -282,6 +282,7 @@
 
                 let opt_json = {{ options|tojson }};
                 let opt_values = opt_json[val];
+                console.log(opt_values.length === 0)
 
                 let dscpt_json = {{ options_descriptions|tojson }};
                 let dscpt_value = dscpt_json[val];

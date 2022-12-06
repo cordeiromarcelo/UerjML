@@ -12,9 +12,13 @@ class Function:
         self.description = description
         self.help_txt = help_txt
 
-        self.param_required = {}
-        for param, default in inspect.signature(function).parameters.items():
-            self.param_required[param] = '=' not in str(default)
+        self.function_params = {}
+        for param, info in inspect.signature(self.function).parameters.items():
+            self.function_params[param] = {
+                "required": 'empty' in str(info.default),
+                "type": info.annotation.__name__,
+                "default": str(info.default)
+            }
 
     def __call__(self, *args):
         return self.function(*args)
@@ -94,7 +98,7 @@ def remove_cols(df, columns, value=None):
     return df.drop(columns, axis=1)
 
 
-def round_cols(df, columns, value):
+def round_cols(df, columns, value: int):
     df = df.copy()
 
     if not isinstance(columns, list):
@@ -104,7 +108,7 @@ def round_cols(df, columns, value):
     return df
 
 
-def floor_cols(df, columns, value):
+def floor_cols(df, columns, value: int):
     df = df.copy()
 
     def my_floor(a, precision=0):
@@ -117,7 +121,7 @@ def floor_cols(df, columns, value):
     return df
 
 
-def ceil_cols(df, columns, value):
+def ceil_cols(df, columns, value: int):
     df = df.copy()
 
     def my_ceil(a, precision=0):
