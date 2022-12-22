@@ -248,6 +248,7 @@
     </script>
 
     <script>
+    // Script that opens Params Modal and Display Errors
     $(document).ready(function() {
 
         $('select.treat-selector').selectpicker('destroy').val('default').selectpicker('update');
@@ -282,18 +283,44 @@
 
                 let opt_json = {{ options|tojson }};
                 let opt_values = opt_json[val];
-                console.log(opt_values.length === 0)
 
                 let dscpt_json = {{ options_descriptions|tojson }};
                 let dscpt_value = dscpt_json[val];
 
-                $("#opt").empty()
-                $("#opt-body").find('p').text(dscpt_value)
+                let kwars_json = {{ funcs_kwars|tojson }};
+                let kwargs_value = kwars_json[val];
 
-                $.each(opt_values, function(value, key) {
-                  $("#opt").append($("<option></option>")
-                     .attr("value", key).text(key));
-                });
+                console.log('param value: ' + JSON.stringify(kwargs_value))
+                console.log('param lenght: ' + Object.keys(kwargs_value).length)
+
+                $("#opt-body").empty()
+                $("#opt-body").append($("<p></p>").text(dscpt_value)).append($("<hr>"))
+
+                if (opt_values.length !== 0){
+                    $("#opt-body").append($("<select></select>")
+                        .attr("class", "form-select").attr("name", "opt").attr("id", "opt"));
+
+                    $.each(opt_values, function(value, key) {
+                      $("#opt").append($("<option></option>")
+                         .attr("value", key).text(key));
+                    });
+                }
+                else {
+                    $("#opt-body").append($("<input>").attr("class", "form-control")
+                        .attr("name", "opt").attr("id", "opt").attr("placeholder", "teste").attr("value", "0"));
+                }
+
+                if(Object.keys(kwargs_value).length > 0){
+                    $("#opt-body").append($("<hr>"))
+                    $.each(kwargs_value, function(col,values) {
+                        let label_html = col.concat(" <code>(", values["type"],")</code>")
+                        $("#opt-body").append($("<div></div>").attr("class", "mb-3")
+                        ).append($("<label></label>").attr("class", "form-label")
+                            .attr("for", col).html(label_html)
+                        ).append($("<input>").attr("class", "form-control")
+                            .attr("id", col).attr("name", "kwargs").attr("value", values['default']));
+                    })
+                }
 
                 var $modal_opts = $("#opt");
                 let opt = $modal_opts.val();

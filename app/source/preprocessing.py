@@ -43,7 +43,7 @@ functions_list = [
     f.Function(function=f.floor_cols,
                name='Arredondar para Baixo',
                category='Numérico',
-               options=[str(i) for i in range(10)],
+               options=[],
                description='Selecione a quantidade de casas decimais',
                help_txt='''Arredonda para baixo, elemento a elemento.
                Matematicamente, o valor arredondado x é o maior inteiro i, tal que i <= x.'''),
@@ -51,7 +51,7 @@ functions_list = [
     f.Function(function=f.ceil_cols,
                name='Arredondar para Cima',
                category='Numérico',
-               options=[str(i) for i in range(10)],
+               options=[],
                description='Selecione a quantidade de casas decimais',
                help_txt='''Arredonda para cima, elemento a elemento.
                Matematicamente, o valor arredondado x é o menor inteiro i, tal que i >= x''')
@@ -68,3 +68,5 @@ funcs_options_dict = {function.name: function.options for function in functions_
 options_descriptions_dict = {function.name: function.description for function in functions_list if function.description is not None}
 
 funcs_helps_dict = {function.name: function.help_txt for function in functions_list}
+
+func_kwargs_dict = {function.name: function.kwargs for function in functions_list}

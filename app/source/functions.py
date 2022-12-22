@@ -12,19 +12,20 @@ class Function:
         self.description = description
         self.help_txt = help_txt
 
-        self.function_params = {}
+        self.kwargs = {}
         for param, info in inspect.signature(self.function).parameters.items():
-            self.function_params[param] = {
-                "required": 'empty' in str(info.default),
-                "type": info.annotation.__name__,
-                "default": str(info.default)
-            }
+            if param not in ['df', 'columns', 'value']:
+                self.kwargs[param] = {
+                    "required": 'empty' in str(info.default),
+                    "type": info.annotation.__name__,
+                    "default": str(info.default)
+                }
 
     def __call__(self, *args):
         return self.function(*args)
 
 
-def fill_null(df: pd.DataFrame, columns, value):
+def fill_null(df: pd.DataFrame, columns, value, teste:int=0, teste2:str='vazio'):
     df = df.copy()
     fill_dict = {
         'None': None,
