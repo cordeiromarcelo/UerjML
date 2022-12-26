@@ -5,7 +5,8 @@ import io
 import json
 import config
 import pandas as pd
-from app.source import preprocessing, utils
+from app.source import utils
+from app.source.preprocessing import preprocessing
 
 platform = Blueprint('platform', __name__, url_prefix='/')
 
@@ -65,11 +66,20 @@ def renderPreprocessing(filename):
             # get the actual file
             df = pd.read_parquet(file_path_parquet)
 
+            print(request.form)
+
+            extra_args = utils.fix_args_types(request.form.getlist('args'))
+            args = [df, request.form.getlist('col')] + extra_args
+            print(args)
+
             try:
                 # Get the selected function and apply
-                print(utils.fix_kwargs_types(request.form.getlist('kwargs')))
+                extra_args = utils.fix_args_types(request.form.getlist('args'))
+                args = [df, request.form.getlist('col')] + extra_args
+                print(args)
+
                 selected_function = preprocessing.name_funcs_dict[request.values['process']]
-                df = selected_function(df, request.form.getlist('col'), request.values['opt'])
+                df = selected_function(*args)
 
                 # Append applied function to history and save to parquet
                 history = history.append(
@@ -127,7 +137,7 @@ def renderPreprocessing(filename):
                            funcs=preprocessing.category_funcs_dict,
                            options=preprocessing.funcs_options_dict,
                            options_descriptions=preprocessing.options_descriptions_dict,
-                           funcs_kwars=preprocessing.func_kwargs_dict,
+                           funcs_args=preprocessing.func_args_dict,
                            help_texts=preprocessing.funcs_helps_dict,
                            error_msg=error_msg,
                            zip=zip, len=len, str=str, list=list)

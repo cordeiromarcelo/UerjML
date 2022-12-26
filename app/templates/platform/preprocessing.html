@@ -251,14 +251,15 @@
     // Script that opens Params Modal and Display Errors
     $(document).ready(function() {
 
+        let val;
         $('select.treat-selector').selectpicker('destroy').val('default').selectpicker('update');
 
         var $select = $("select.treat-selector");
         $select.selectpicker();
 
         // declare global variable to store the initial value of my select
-        var initVal;
-        var cond = {{ list(options.keys())|tojson }};
+        let initVal;
+        let func_args_dict = {{ funcs_args|tojson }};
 
         // when the select dropdown opens, store the current value in initVal
         $select.on('show.bs.select', function () {
@@ -268,16 +269,21 @@
 
         // when the select dropdown is closed, store the current value in val
         $select.on("hide.bs.select", function() {
-            const val = $(this).val().toString();
+            val = $(this).val().toString();
             console.log('current value is ' + val);
 
             let help_json = {{ help_texts|tojson }};
-            if (val !== ''){
+            if (val !== '') {
                 let text_html = "<code>".concat(val, "</code>: ", help_json[val])
                 $("#accordionHelp").find('p').html(text_html)
             }
 
-            if (cond.includes(val)) {
+            let args_info = func_args_dict[val]
+
+            console.log('param value: ' + JSON.stringify(args_info))
+            console.log('param lenght: ' + Object.keys(args_info).length)
+
+            if (Object.keys(args_info).length > 0) {
                 console.log("new");
                 $('#staticBackdrop').modal('show');
 
@@ -287,53 +293,46 @@
                 let dscpt_json = {{ options_descriptions|tojson }};
                 let dscpt_value = dscpt_json[val];
 
-                let kwars_json = {{ funcs_kwars|tojson }};
-                let kwargs_value = kwars_json[val];
-
-                console.log('param value: ' + JSON.stringify(kwargs_value))
-                console.log('param lenght: ' + Object.keys(kwargs_value).length)
-
                 $("#opt-body").empty()
                 $("#opt-body").append($("<p></p>").text(dscpt_value)).append($("<hr>"))
 
-                if (opt_values.length !== 0){
-                    $("#opt-body").append($("<select></select>")
-                        .attr("class", "form-select").attr("name", "opt").attr("id", "opt"));
+                $.each(args_info, function(col,values) {
+                    let label_html = col.concat(" <code>(", values["type"],")</code>")
 
-                    $.each(opt_values, function(value, key) {
-                      $("#opt").append($("<option></option>")
-                         .attr("value", key).text(key));
-                    });
-                }
-                else {
-                    $("#opt-body").append($("<input>").attr("class", "form-control")
-                        .attr("name", "opt").attr("id", "opt").attr("placeholder", "teste").attr("value", "0"));
-                }
+                    if (!opt_values){
+                        opt_values = []
+                    }
 
-                if(Object.keys(kwargs_value).length > 0){
-                    $("#opt-body").append($("<hr>"))
-                    $.each(kwargs_value, function(col,values) {
-                        let label_html = col.concat(" <code>(", values["type"],")</code>")
+                    if (col in opt_values) {
+                        $("#opt-body").append($("<div></div>").attr("class", "mb-3")
+                        ).append($("<label></label>").attr("class", "form-label")
+                            .attr("for", col).html(label_html)
+                        ).append($("<select></select>")
+                            .attr("class", "form-select").attr("name", "args").attr("id", "opt"));
+
+                        $.each(opt_values[col], function(value, key) {
+                          $("#opt").append($("<option></option>")
+                             .attr("value", key).text(key));
+                        });
+                    }
+
+                    else{
                         $("#opt-body").append($("<div></div>").attr("class", "mb-3")
                         ).append($("<label></label>").attr("class", "form-label")
                             .attr("for", col).html(label_html)
                         ).append($("<input>").attr("class", "form-control")
-                            .attr("id", col).attr("name", "kwargs").attr("value", values['default']));
-                    })
-                }
-
-                var $modal_opts = $("#opt");
-                let opt = $modal_opts.val();
-
-                $modal_opts.on("blur", function() {
-                    opt = $(this).val();
-                    console.log(opt)
-                    $("div.treat-selector > button > div > div > div").text(val.concat(" (", opt, ")"))
-                });
-                console.log(opt)
-                $("div.treat-selector > button > div > div > div").text(val.concat(" (", opt, ")"))
+                            .attr("id", col).attr("name", "args").attr("value", values['default']));
+                    }
+                })
             }
         });
+
+        $('#staticBackdrop').on('hidden.bs.modal', function () {
+            var titles = $("[name='args']").map(function(idx, elem) {
+                return $(elem).val();
+            }).get();
+            $("div.treat-selector > button > div > div > div").text(val.concat(" (", titles, ")"))
+        })
 
         const modal_div = $("#form-div");
         let error_msg = "{{ error_msg }}"

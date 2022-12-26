@@ -8,5 +8,5 @@ def simplest_type(s):
         return s
 
 
-def fix_kwargs_types(kwarg_list):
-    return [simplest_type(kwarg) for kwarg in kwarg_list]
+def fix_args_types(args_list):
+    return [simplest_type(arg) for arg in args_list]
