@@ -21,6 +21,7 @@
 {% block action %}
     <h1 class="display-6 fw-normal">Treino de Modelo</h1>
     <p class="lead fw-normal">Selecione as colunas para receber o tratamento de sua escolha.</p>
+    <div class="loader" id="loading"></div>
     <div class="card-body" id="form-div">
         <form method="POST" action="" enctype="multipart/form-data">
             <div class="row mb-3 justify-content-center">
@@ -55,7 +56,7 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" name="action" value="apply" class="btn btn-success mb-3 px-5">Treinar</button>
+            <button type="submit" name="action" value="apply" class="btn btn-success mb-3 px-5" onclick="loading();">Treinar</button>
         </form>
     </div>
 {% endblock %}
@@ -231,6 +232,13 @@
           $(this).tab('show')
         })
     </script>
+
+    <script type="text/javascript">// <![CDATA[
+        function loading(){
+            $("#loading").show();
+            $("#form-div").hide();
+        }
+// ]]></script>
 
     <script>
     // Script that opens Params Modal and Display Errors

@@ -11291,3 +11291,22 @@ body.sidebar-toggled footer.sticky-footer {
   height: 600px;  /* or as desired */
   width: 100%;  /* This means "100% of the width of its container", the .col-md-8 */
 }
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-bottom: 16px solid #3498db;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  display: none;
+  margin-left: auto;
+  margin-right: auto;
+  animation: spin 2s linear infinite;
+  cursor: wait;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
