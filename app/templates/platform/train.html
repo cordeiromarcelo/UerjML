@@ -23,14 +23,17 @@
     <p class="lead fw-normal">Selecione as colunas para receber o tratamento de sua escolha.</p>
     <div class="card-body" id="form-div">
         <form method="POST" action="" enctype="multipart/form-data">
-            <div class="row mb-3">
-                <div class="col">
+            <div class="row mb-3 justify-content-center">
+                <div class="col-6">
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <label class="form-label font-weight-bold text-primary" for="col">Coluna</label>
+                        <div class="card-header font-weight-bold text-primary py-3">
+                            <label class="form-label" for="col">Target</label>
+                            <i class="bi bi-info-circle-fill ms-1"
+                            data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="left"
+                            title="<b>Coluna <code>Target</code> do modelo</b>. Ou seja, a coluna que você deseja que seu modelo seja capaz de <b>prever</b>"></i>
                         </div>
                         <div class="card-body">
-                            <select class="selectpicker" title="Escolha a(s) Coluna(s)" multiple name="col" id="col" data-actions-box="true" data-live-search="true" data-selected-text-format="count" data-width="75%" data-dropup-auto="false" data-container="body" >
+                            <select class="selectpicker" title="Coluna a ser Prevista" name="col" id="col" data-actions-box="true" data-live-search="true" data-width="75%" data-dropup-auto="false" data-container="body" >
                                 {% for col in column_names %}
                                 <option value="{{col}}">{{col}}</option>
                                 {% endfor %}
@@ -38,47 +41,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <div class="card shadow mb-4">
                         <div class="card-header font-weight-bold text-primary py-3">
-                            <label class="form-label" for="process">Tratamento</label>
+                            <label class="form-label" for="process">Tempo de Processamento</label>
+                            <i class="bi bi-info-circle-fill ms-1"
+                            data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="left"
+                            title="<b>Tempo de processamento limite</b> <code>em segundos</code> para o treinamento do modelo. <br> Quanto maior o tempo de processamento, <b>melhor o resultado</b>"></i>
                         </div>
                         <div class="card-body treat-selector">
-                            <select class="selectpicker treat-selector" autocomplete="off" title="Escolha a Função" name="process" id="process" data-live-search="true" data-width="75%" data-dropup-auto="false" data-container="body">
-                            {% for key, values in funcs.items() %}
-                                <optgroup label="{{key}}">
-                                  {% for func in values %}
-                                    <option value="{{func}}">{{func}}</option>
-                                  {% endfor %}
-                                </optgroup>
-                              {% endfor %}
-                            </select>
+                            <input class="form-control" value="120" autocomplete="off" title="Segundos de Treinamento" name="process" id="process" data-width="75%" data-dropup-auto="false" data-container="body">
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Condição da Função</h1>
-                  </div>
-                  <div class="modal-body" id="opt-body">
-                      <p>This triggers a popover on click.</p>
-                      <hr>
-                      <label for="opt">Selecione</label>
-                      <select class="form-select" name="opt" id="opt">
-                        <option selected>vazio</option>
-                      </select>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Concluído</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <button type="submit" name="action" value="undo" class="btn btn-secondary mb-3 px-5">Desfazer</button>
-            <button type="submit" name="action" value="apply" class="btn btn-success mb-3 px-5">Aplicar</button>
+            <button type="submit" name="action" value="apply" class="btn btn-success mb-3 px-5">Treinar</button>
         </form>
     </div>
 {% endblock %}
@@ -105,6 +82,14 @@
     <div class="row align-self-end mt-2 me-4">
         <form method="POST" action="" enctype="multipart/form-data">
             <button type="submit" name="action" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block left %}
+    <div class="row align-self-start ms-2 me-4 mt-auto">
+        <form method="POST" action="" enctype="multipart/form-data">
+            <button type="submit" name="action" value="back" class="btn btn-lg btn-primary mb-4 px-4"><i class="bi bi-arrow-return-left"></i> Voltar</button>
         </form>
     </div>
 {% endblock %}
@@ -250,90 +235,6 @@
     <script>
     // Script that opens Params Modal and Display Errors
     $(document).ready(function() {
-
-        let val;
-        $('select.treat-selector').selectpicker('destroy').val('default').selectpicker('update');
-
-        var $select = $("select.treat-selector");
-        $select.selectpicker();
-
-        // declare global variable to store the initial value of my select
-        let initVal;
-        let func_args_dict = {{ funcs_args|new_tojson }};
-
-        // when the select dropdown opens, store the current value in initVal
-        $select.on('show.bs.select', function () {
-            initVal = $(this).val().toString();
-            console.log('initial value is ' + initVal);
-        });
-
-        // when the select dropdown is closed, store the current value in val
-        $select.on("hide.bs.select", function() {
-            val = $(this).val().toString();
-            console.log('current value is ' + val);
-
-            let help_json = {{ help_texts|tojson }};
-            if (val !== '') {
-                let text_html = "<code>".concat(val, "</code>: ", help_json[val])
-                $("#accordionHelp").find('p').html(text_html)
-            }
-
-            let args_info = func_args_dict[val]
-
-            console.log('param value: ' + JSON.stringify(args_info))
-            console.log('param lenght: ' + Object.keys(args_info).length)
-
-            if (Object.keys(args_info).length > 0) {
-                console.log("new");
-                $('#staticBackdrop').modal('show');
-
-                let opt_json = {{ options|tojson }};
-                let opt_values = opt_json[val];
-
-                let dscpt_json = {{ options_descriptions|tojson }};
-                let dscpt_value = dscpt_json[val];
-
-                $("#opt-body").empty()
-                $("#opt-body").append($("<p></p>").text(dscpt_value)).append($("<hr>"))
-
-                $.each(args_info, function(col,values) {
-                    let label_html = col.concat(" <code>(", values["type"],")</code>")
-
-                    if (!opt_values){
-                        opt_values = []
-                    }
-
-                    if (col in opt_values) {
-                        $("#opt-body").append($("<div></div>").attr("class", "mb-3")
-                        ).append($("<label></label>").attr("class", "form-label")
-                            .attr("for", col).html(label_html)
-                        ).append($("<select></select>")
-                            .attr("class", "form-select").attr("name", "args").attr("id", "opt"));
-
-                        $.each(opt_values[col], function(value, key) {
-                          $("#opt").append($("<option></option>")
-                             .attr("value", key).text(key));
-                        });
-                    }
-
-                    else{
-                        $("#opt-body").append($("<div></div>").attr("class", "mb-3")
-                        ).append($("<label></label>").attr("class", "form-label")
-                            .attr("for", col).html(label_html)
-                        ).append($("<input>").attr("class", "form-control")
-                            .attr("id", col).attr("name", "args").attr("value", values['default']));
-                    }
-                })
-            }
-        });
-
-        $('#staticBackdrop').on('hidden.bs.modal', function () {
-            var titles = $("[name='args']").map(function(idx, elem) {
-                return $(elem).val();
-            }).get();
-            $("div.treat-selector > button > div > div > div").text(val.concat(" (", titles, ")"))
-        })
-
         const modal_div = $("#form-div");
         let error_msg = "{{ error_msg }}"
         if (error_msg !== "Erro: ") {
