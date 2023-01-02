@@ -96,7 +96,7 @@
             </h2>
             <div id="flush-collapseHelp" class="accordion-collapse collapse" aria-labelledby="flush-headingHelp" data-bs-parent="#accordionFlushExample">
               <div class="accordion-body" id="accordionHelp">
-                  <p>Aqui você encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!</p>
+                  <p>Aqui encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!</p>
               </div>
             </div>
           </div>
@@ -104,7 +104,7 @@
     </div>
     <div class="row align-self-end mt-2 me-4">
         <form method="POST" action="" enctype="multipart/form-data">
-            <button type="submit" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
+            <button type="submit" name="action" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
         </form>
     </div>
 {% endblock %}
@@ -248,16 +248,18 @@
     </script>
 
     <script>
+    // Script that opens Params Modal and Display Errors
     $(document).ready(function() {
 
+        let val;
         $('select.treat-selector').selectpicker('destroy').val('default').selectpicker('update');
 
         var $select = $("select.treat-selector");
         $select.selectpicker();
 
         // declare global variable to store the initial value of my select
-        var initVal;
-        var cond = {{ list(options.keys())|tojson }};
+        let initVal;
+        let func_args_dict = {{ funcs_args|new_tojson }};
 
         // when the select dropdown opens, store the current value in initVal
         $select.on('show.bs.select', function () {
@@ -267,16 +269,21 @@
 
         // when the select dropdown is closed, store the current value in val
         $select.on("hide.bs.select", function() {
-            const val = $(this).val().toString();
+            val = $(this).val().toString();
             console.log('current value is ' + val);
 
             let help_json = {{ help_texts|tojson }};
-            if (val !== ''){
+            if (val !== '') {
                 let text_html = "<code>".concat(val, "</code>: ", help_json[val])
                 $("#accordionHelp").find('p').html(text_html)
             }
 
-            if (cond.includes(val)) {
+            let args_info = func_args_dict[val]
+
+            console.log('param value: ' + JSON.stringify(args_info))
+            console.log('param lenght: ' + Object.keys(args_info).length)
+
+            if (Object.keys(args_info).length > 0) {
                 console.log("new");
                 $('#staticBackdrop').modal('show');
 
@@ -286,26 +293,46 @@
                 let dscpt_json = {{ options_descriptions|tojson }};
                 let dscpt_value = dscpt_json[val];
 
-                $("#opt").empty()
-                $("#opt-body").find('p').text(dscpt_value)
+                $("#opt-body").empty()
+                $("#opt-body").append($("<p></p>").text(dscpt_value)).append($("<hr>"))
 
-                $.each(opt_values, function(value, key) {
-                  $("#opt").append($("<option></option>")
-                     .attr("value", key).text(key));
-                });
+                $.each(args_info, function(col,values) {
+                    let label_html = col.concat(" <code>(", values["type"],")</code>")
 
-                var $modal_opts = $("#opt");
-                let opt = $modal_opts.val();
+                    if (!opt_values){
+                        opt_values = []
+                    }
 
-                $modal_opts.on("blur", function() {
-                    opt = $(this).val();
-                    console.log(opt)
-                    $("div.treat-selector > button > div > div > div").text(val.concat(" (", opt, ")"))
-                });
-                console.log(opt)
-                $("div.treat-selector > button > div > div > div").text(val.concat(" (", opt, ")"))
+                    if (col in opt_values) {
+                        $("#opt-body").append($("<div></div>").attr("class", "mb-3")
+                        ).append($("<label></label>").attr("class", "form-label")
+                            .attr("for", col).html(label_html)
+                        ).append($("<select></select>")
+                            .attr("class", "form-select").attr("name", "args").attr("id", "opt"));
+
+                        $.each(opt_values[col], function(value, key) {
+                          $("#opt").append($("<option></option>")
+                             .attr("value", key).text(key));
+                        });
+                    }
+
+                    else{
+                        $("#opt-body").append($("<div></div>").attr("class", "mb-3")
+                        ).append($("<label></label>").attr("class", "form-label")
+                            .attr("for", col).html(label_html)
+                        ).append($("<input>").attr("class", "form-control")
+                            .attr("id", col).attr("name", "args").attr("value", values['default']));
+                    }
+                })
             }
         });
+
+        $('#staticBackdrop').on('hidden.bs.modal', function () {
+            var titles = $("[name='args']").map(function(idx, elem) {
+                return $(elem).val();
+            }).get();
+            $("div.treat-selector > button > div > div > div").text(val.concat(" (", titles, ")"))
+        })
 
         const modal_div = $("#form-div");
         let error_msg = "{{ error_msg }}"

@@ -259,7 +259,7 @@
 
         // declare global variable to store the initial value of my select
         let initVal;
-        let func_args_dict = {{ funcs_args|tojson }};
+        let func_args_dict = {{ funcs_args|new_tojson }};
 
         // when the select dropdown opens, store the current value in initVal
         $select.on('show.bs.select', function () {

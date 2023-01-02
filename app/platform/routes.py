@@ -5,10 +5,24 @@ import io
 import json
 import config
 import pandas as pd
+
+from markupsafe import Markup
+import typing as t
+from jinja2.utils import htmlsafe_json_dumps
+from jinja2 import Environment
+
 from app.source import utils
 from app.source.preprocessing import preprocessing
 
 platform = Blueprint('platform', __name__, url_prefix='/')
+
+
+@platform.app_template_filter('new_tojson')
+def new_tojson_filter(value: t.Any) -> Markup:
+    env = Environment()
+    dumps = env.policies["json.dumps_function"]
+    kwargs = {'sort_keys': False}
+    return htmlsafe_json_dumps(value, dumps=dumps, **kwargs)
 
 
 @platform.route('/')
@@ -61,16 +75,12 @@ def renderPreprocessing(filename):
     history = pd.read_parquet(file_path_history)
     error_msg = "Erro: "
 
+    print(preprocessing.func_args_dict)
+
     if request.method == 'POST':
         if request.form.get('action') == "apply":
             # get the actual file
             df = pd.read_parquet(file_path_parquet)
-
-            print(request.form)
-
-            extra_args = utils.fix_args_types(request.form.getlist('args'))
-            args = [df, request.form.getlist('col')] + extra_args
-            print(args)
 
             try:
                 # Get the selected function and apply
@@ -157,7 +167,7 @@ def renderTrain(filename):
     df = pd.read_parquet(file_path_parquet)
 
     # describe information
-    describe = df.describe().reset_index()
+    describe = df.describe(include='all').reset_index()
 
     # dtypes information
     dtypes = pd.DataFrame(df.dtypes).reset_index()
