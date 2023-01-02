@@ -1,16 +1,17 @@
-from flask import Blueprint, render_template, request, redirect, url_for
 import os
 import shutil
-import io
-import json
-import config
-import pandas as pd
-
-from markupsafe import Markup
 import typing as t
-from jinja2.utils import htmlsafe_json_dumps
-from jinja2 import Environment
 
+import pandas as pd
+from flask import Blueprint, render_template, request, redirect, url_for
+from jinja2 import Environment
+from jinja2.utils import htmlsafe_json_dumps
+from markupsafe import Markup
+
+from sklearn.model_selection import train_test_split
+from autogluon.tabular import TabularPredictor
+
+import config
 from app.source import utils
 from app.source.preprocessing import preprocessing
 
@@ -126,11 +127,14 @@ def renderPreprocessing(filename):
         if request.form.get('action') == "next":
             return redirect(url_for('platform.renderTrain', filename=filename))
 
+        if request.form.get('action') == "back":
+            return redirect(url_for('platform.uploadFiles', filename=filename))
+
     else:
         df = pd.read_parquet(file_path_parquet)
 
     # describe information
-    describe = df.describe().reset_index()
+    describe = df.describe(include='all').reset_index()
 
     # dtypes information
     dtypes = pd.DataFrame(df.dtypes).reset_index()
@@ -173,6 +177,27 @@ def renderTrain(filename):
     dtypes = pd.DataFrame(df.dtypes).reset_index()
     dtypes.columns = ['coluna', 'tipo']
 
+    if request.method == 'POST':
+        if request.form.get('action') == "apply":
+            try:
+                # Get the selected function and apply
+                label = request.values['col']
+                time = int(request.values['process'])
+                print('label:', label)
+                print('time:', time)
+
+                df_train, df_test = train_test_split(
+                    df, test_size=0.33, random_state=42)
+
+                predictor = TabularPredictor(label=label).fit(df_train, time_limit=time)  # Fit models for 120s
+                leaderboard = predictor.leaderboard(df_test)
+
+            except Exception as e:
+                error_msg += str(e)
+
+        if request.form.get('action') == "back":
+            return redirect(url_for('platform.renderPreprocessing', filename=filename))
+
     return render_template("platform/train.html", column_names=df.columns.values,
                            row_data=list(df.values.tolist())[:1000],
                            describe_columns=describe.columns.values,
@@ -181,9 +206,5 @@ def renderTrain(filename):
                            dtypes_data=list(dtypes.values.tolist()),
                            history_columns=history.columns.values,
                            history_data=list(history.values.tolist()),
-                           funcs=preprocessing.category_funcs_dict,
-                           options=preprocessing.funcs_options_dict,
-                           options_descriptions=preprocessing.options_descriptions_dict,
-                           help_texts=preprocessing.funcs_helps_dict,
                            error_msg=error_msg,
                            zip=zip, len=len, str=str, list=list)
