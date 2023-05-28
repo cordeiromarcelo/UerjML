@@ -28,6 +28,8 @@ def new_tojson_filter(value: t.Any) -> Markup:
 
 @platform.route('/')
 def index():
+
+    os.listdir(config.UPLOAD_FOLDER)
     return render_template('platform/index.html')
 
 

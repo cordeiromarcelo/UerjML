@@ -23,3 +23,38 @@
     </div>
     </div>
 {% endblock %}
+
+{% block right %}
+    <div class="row my-auto px-lg-5 px-md-0 px-3">
+        <div class="card shadow accordion accordion-flush p-0" id="accordionFlushLoad>">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingLoad">
+              <button class="accordion-button collapsed card-header font-weight-bold text-primary"  type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseLoad" aria-expanded="false" aria-controls="flush-collapseLoad">
+                Arquivos <i class="bi bi-info-circle-fill ms-3"
+              data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="left"
+                         title="Clique para recarregar um arquivo e continuar de onde parou!"></i>
+              </button>
+            </h2>
+            <div id="flush-collapseLoad" class="accordion-collapse collapse" aria-labelledby="flush-headingLoad" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body" id="accordionLoad">
+                  <p>Aqui encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="row align-self-end mt-2 me-4">
+        <form method="POST" action="" enctype="multipart/form-data">
+            <button type="submit" name="action" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+    </script>
+{% endblock %}
