@@ -1,16 +1,10 @@
 import numpy as np
-from preprocessing.functions import selecao, numerico, tratamento
+import inspect
 
-functions_list = [
-    tratamento.FillNull(),
-    tratamento.RemoveNulls(),
-    tratamento.ChangeType(),
-    selecao.SelectCols(),
-    selecao.RemoveCols(),
-    numerico.RoundCols(),
-    numerico.FloorCols(),
-    numerico.CeilCols()
-]
+from preprocessing import functions
+
+clsmembers = inspect.getmembers(functions, inspect.isclass)
+functions_list = [obj() for name, obj in clsmembers if name != 'Function']
 
 name_funcs_dict = dict(zip([function.name for function in functions_list], functions_list))
 

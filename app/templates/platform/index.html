@@ -18,7 +18,7 @@
         <div class="card-body">
             <form method="POST" action="" enctype="multipart/form-data">
                 <input type="file" name="file" class="form-control form-control-lg mb-3" id="customFile", onchange="$('#upload-file-info').text(this.files[0].name)">
-                <button type="submit" value="Submit" class="btn btn-primary px-5">Enviar</button>
+                <button type="submit" name="action" value="Submit" class="btn btn-primary px-5">Enviar</button>
             </form>
     </div>
     </div>
@@ -37,16 +37,17 @@
             </h2>
             <div id="flush-collapseLoad" class="accordion-collapse collapse" aria-labelledby="flush-headingLoad" data-bs-parent="#accordionFlushExample">
               <div class="accordion-body" id="accordionLoad">
-                  <p>Aqui encontrará ajuda com explicações sobre a <code>Função de tratamento</code> selecionada ao lado. Basta escolher uma!</p>
+                  <div class="list-group overflow-auto shadow" style="max-height: 220px;">
+                      {% for col in saved_dfs %}
+                          <a href="{{col}}" class="list-group-item list-group-item-action">{{col}}</a>
+                      {% endfor %}
+                  </div>
               </div>
             </div>
           </div>
         </div>
     </div>
     <div class="row align-self-end mt-2 me-4">
-        <form method="POST" action="" enctype="multipart/form-data">
-            <button type="submit" name="action" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
-        </form>
     </div>
 {% endblock %}
 

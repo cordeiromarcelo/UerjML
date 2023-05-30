@@ -3,13 +3,12 @@ import shutil
 import typing as t
 
 import pandas as pd
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, Response
 from jinja2 import Environment
 from jinja2.utils import htmlsafe_json_dumps
 from markupsafe import Markup
 
 from sklearn.model_selection import train_test_split
-from autogluon.tabular import TabularPredictor
 
 import config
 from app.source import utils
@@ -29,8 +28,8 @@ def new_tojson_filter(value: t.Any) -> Markup:
 @platform.route('/')
 def index():
 
-    os.listdir(config.UPLOAD_FOLDER)
-    return render_template('platform/index.html')
+    saved_dfs = os.listdir(config.UPLOAD_FOLDER)
+    return render_template('platform/index.html', saved_dfs=saved_dfs)
 
 
 @platform.route("/", methods=['POST'])
@@ -159,6 +158,21 @@ def renderPreprocessing(filename):
                            zip=zip, len=len, str=str, list=list)
 
 
+# @platform.route('/<string:filename>/model/output')
+# def content(run):
+#     """
+#     Render the content a url different from index
+#     """
+#     def inner():
+#         # simulate a long process to watch
+#         for i in range(500):
+#             j = math.sqrt(i)
+#             time.sleep(1)
+#             # this value should be inserted into an HTML template
+#             yield str(i) + '<br/>\n'
+#     return Response(inner(), mimetype='text/html')
+
+
 @platform.route('/<string:filename>/model', methods=['GET', 'POST'])
 def renderTrain(filename):
 
@@ -191,8 +205,24 @@ def renderTrain(filename):
                 df_train, df_test = train_test_split(
                     df, test_size=0.33, random_state=42)
 
+                import sys
+                from io import StringIO
+                import jinja2
+                import logging
+
+                logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
+                old_stderr = sys.stderr
+                sys.stderr = mystderr = StringIO()
+                from autogluon.tabular import TabularPredictor
                 predictor = TabularPredictor(label=label).fit(df_train, time_limit=time)  # Fit models for 120s
+                sys.stderr = old_stderr
                 leaderboard = predictor.leaderboard(df_test)
+
+                print(mystderr.getvalue())
+                return jinja2.Template("<div id='console'>my output = {{ console }}</div>").render(
+                    console=mystderr.getvalue()
+                )
 
             except Exception as e:
                 error_msg += str(e)
