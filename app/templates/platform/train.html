@@ -59,6 +59,7 @@
             <button type="submit" name="action" value="apply" class="btn btn-success mb-3 px-5" onclick="loading();">Treinar</button>
         </form>
     </div>
+
 {% endblock %}
 
 {% block right %}
@@ -80,11 +81,6 @@
           </div>
         </div>
     </div>
-    <div class="row align-self-end mt-2 me-4">
-        <form method="POST" action="" enctype="multipart/form-data">
-            <button type="submit" name="action" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
-        </form>
-    </div>
 {% endblock %}
 
 {% block left %}
@@ -97,6 +93,18 @@
 
 {% block content %}
     <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8">
+                <div class="card-header py-1">
+                    <h6 class="m-0 font-weight-bold text-primary">Console</h6>
+                </div>
+                <div class="card shadow mb-4" style="max-height: 30vh; overflow-y: scroll;" id="log">
+                    <div class="card-body">
+                        <p class="text-secondary" id="stdout"> > </p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-12 col-md-8">
                 <div class="card shadow mb-4">
@@ -234,11 +242,30 @@
     </script>
 
     <script type="text/javascript">// <![CDATA[
+
+        function updateScroll(){
+            var element = document.getElementById("log");
+            element.scrollTop = element.scrollHeight;
+        }
+
+        var stdout = document.getElementById("stdout");
+
         function loading(){
             $("#loading").show();
             $("#form-div").hide();
+            setInterval(() => {
+            fetch("{{ url_for('platform.content', filename=filename) }}")
+            .then(response => {
+                    response.text().then(t => {stdout.innerHTML = t})
+                });
+            updateScroll();
+            }, 1000);
         }
 // ]]></script>
+
+    <script>
+
+    </script>
 
     <script>
     // Script that opens Params Modal and Display Errors
