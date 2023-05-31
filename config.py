@@ -6,7 +6,7 @@ import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Upload folder
-UPLOAD_FOLDER = 'app/static/files'
+UPLOAD_FOLDER = 'app/files'
 
 # Define the database - we are working with
 # SQLite for this example
