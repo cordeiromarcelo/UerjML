@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from preprocessing.function_class import Function
+from app.source.preprocessing.function_class import Function
 
 
 class FillNull(Function):

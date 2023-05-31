@@ -14,7 +14,7 @@
         <li class="active" id="step1"><strong>Upload de Dados</strong></li>
         <li class="active" id="step2"><strong>Tratamento de Dados</strong></li>
         <li class="active" id="step3"><strong>Treino de Modelo</strong></li>
-        <li id="step4"><strong>Step 4</strong></li>
+        <li id="step4"><strong>Avaliar e Prever</strong></li>
     </ul>
 {% endblock %}
 
@@ -254,7 +254,7 @@
             $("#loading").show();
             $("#form-div").hide();
             setInterval(() => {
-            fetch("{{ url_for('platform.content', filename=filename) }}")
+            fetch("{{ url_for('train.content', filename=filename) }}")
             .then(response => {
                     response.text().then(t => {stdout.innerHTML = t})
                 });

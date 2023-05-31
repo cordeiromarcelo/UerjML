@@ -7,14 +7,14 @@
         <li class="active" id="step1"><strong>Upload de Dados</strong></li>
         <li id="step2"><strong>Tratamento de Dados</strong></li>
         <li id="step3"><strong>Treino de Modelo</strong></li>
-        <li id="step4"><strong>Step 4</strong></li>
+        <li id="step4"><strong>Avaliar e Prever</strong></li>
     </ul>
 {% endblock %}
 
 {% block action %}
     <h1 class="display-6 fw-normal">Upload de Dados</h1>
     <div class="my-4 mb-5">
-        <p class="lead fw-normal">Envie seu arquivo em formato CSV contendo a latitude, longitude e peso da localidade para a otimização logística.</p>
+        <p class="lead fw-normal">Envie seu arquivo em formato CSV contendo os dados que serão tratados e usados para treinamento</p>
         <div class="card-body">
             <form method="POST" action="" enctype="multipart/form-data">
                 <input type="file" name="file" class="form-control form-control-lg mb-3" id="customFile", onchange="$('#upload-file-info').text(this.files[0].name)">

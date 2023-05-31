@@ -1,7 +1,7 @@
 import numpy as np
 import inspect
 
-from preprocessing import functions
+from app.source.preprocessing import functions
 
 clsmembers = inspect.getmembers(functions, inspect.isclass)
 functions_list = [obj() for name, obj in clsmembers if name != 'Function']

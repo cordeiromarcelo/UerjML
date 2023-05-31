@@ -1,3 +1,3 @@
-from preprocessing.functions.colunas import *
-from preprocessing.functions.numerico import *
-from preprocessing.functions.tratamento import *
+from app.source.preprocessing.functions.colunas import *
+from app.source.preprocessing.functions.numerico import *
+from app.source.preprocessing.functions.tratamento import *

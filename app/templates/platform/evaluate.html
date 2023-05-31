@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Table{% endblock %}
+
+{% block steps %}
+    <ul id="progressbar">
+        <li class="active" id="step1"><strong>Upload de Dados</strong></li>
+        <li class="active" id="step2"><strong>Tratamento de Dados</strong></li>
+        <li class="active" id="step3"><strong>Treino de Modelo</strong></li>
+        <li class="active" id="step4"><strong>Avaliar e Prever</strong></li>
+    </ul>
+{% endblock %}
+
+{% block action %}
+    <h1 class="display-6 fw-normal">Upload de Dados de Treino</h1>
+    <div class="my-4 mb-5">
+        <p class="lead fw-normal">Envie seu arquivo em formato CSV que será usado para previsões</p>
+        <div class="card-body">
+            <form method="POST" action="" enctype="multipart/form-data">
+                <input type="file" name="file" class="form-control form-control-lg mb-3" id="customFile", onchange="$('#upload-file-info').text(this.files[0].name)">
+                <button type="submit" name="action" value="Submit" class="btn btn-primary px-5">Enviar</button>
+            </form>
+    </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Dados Importados</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive text-nowrap">
+                            <table class="table table-bordered table-hover" id="sortTable">
+                                {% if len(leaderboard_row) == 1000 %}
+                                <caption>Somente as primeiras 1000 linhas</caption>
+                                {% endif %}
+                                <thead>
+                                <tr>
+                                    {% for col in leaderboard_columns %}
+                                    <th>{{col}}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in leaderboard_row %}
+                                <tr>
+                                    {% for col, row_ in zip(leaderboard_columns, row) %}
+                                    <td>{{row_}}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
