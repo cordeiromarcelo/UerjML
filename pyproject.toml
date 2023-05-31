@@ -1,0 +1,29 @@
+[project]
+name = "UerjML"
+version = "0.0.1"
+authors = [
+  { name="Marcelo Cordeiro", email="cnmarcelocn@gmail.com" },
+]
+description = "Uma plataforma de Machine Learning brasileira, gratuita e de rodagem local"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+readme = "README.md"
+dependencies = [
+    "flask",
+    "pandas",
+    "numpy",
+    "pyarrow",
+    "autogluon",
+    "scikit-learn"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/cordeiromarcelo/UerjML"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

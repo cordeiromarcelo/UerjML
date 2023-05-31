@@ -7,7 +7,7 @@ from app.routes.evaluate import evaluate_bp as evaluate_module
 
 app = Flask(__name__)
 
-app.config.from_object('config')
+app.config.from_object('app.config')
 
 app.register_blueprint(platform_module)
 app.register_blueprint(index_module)

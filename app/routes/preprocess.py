@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from flask import Blueprint, render_template, request, redirect, url_for
 
-import config
+import app.config as config
 from app.source import utils
 from app.source.preprocessing import preprocessing
 

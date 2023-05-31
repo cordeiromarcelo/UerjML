@@ -4,7 +4,7 @@ import shutil
 import pandas as pd
 from flask import Blueprint, render_template, request, redirect, url_for
 
-import config
+import app.config as config
 
 index_bp = Blueprint('index', __name__, url_prefix='/')
 
@@ -34,7 +34,7 @@ def uploadFiles():
         for folder_name in ['versions', 'logs', 'raw', 'interim']:
             os.makedirs(os.path.join(root_path, folder_name))
 
-        file_path_csv = os.path.join(file_path, 'raw', filename + '.csv')
+        file_path_csv = os.path.join(root_path, 'raw', filename + '.csv')
         uploaded_file.save(file_path_csv)
         df = pd.read_csv(file_path_csv, encoding='unicode_escape')
 

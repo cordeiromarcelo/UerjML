@@ -7,9 +7,10 @@ from contextlib import redirect_stderr
 
 from sklearn.model_selection import train_test_split
 
-import config
+import app.config as config
 
 train_bp = Blueprint('train', __name__, url_prefix='/')
+
 
 @train_bp.route('/<string:filename>/train_log')
 def content(filename):

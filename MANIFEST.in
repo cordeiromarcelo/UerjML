@@ -1,0 +1,9 @@
+include config.py
+graft app/routes
+graft app/source
+graft app/static
+graft app/templates
+graft app/files
+global-exclude *.pyc
+global-exclude *.parquet
+global-exclude *.csv

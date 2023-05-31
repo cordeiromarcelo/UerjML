@@ -4,7 +4,7 @@ import pandas as pd
 from flask import Blueprint, render_template, request, redirect, url_for
 
 from app.source.evaluate.custom_metrics import classification_metrics, regression_metrics
-import config
+import app.config as config
 
 evaluate_bp = Blueprint('evaluate', __name__, url_prefix='/')
 
