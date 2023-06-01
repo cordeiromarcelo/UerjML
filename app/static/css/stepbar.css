@@ -70,19 +70,22 @@ h2{
 	font-weight: normal
 }
 
+.step-bar {
+	z-index: 5;
+}
+
 #progressbar {
-	margin-bottom: 30px;
 	overflow: hidden;
 	color: lightgrey
 }
 
 #progressbar .active {
-	color: #2F8D46
+	color: #4e73df;
 }
 
 #progressbar li {
 	list-style-type: none;
-	font-size: 15px;
+	font-size: 12px;
 	width: 25%;
 	float: left;
 	position: relative;
@@ -105,17 +108,21 @@ h2{
 	content: "4"
 }
 
+#progressbar li a {
+	color: #858796;
+}
+
 #progressbar li:before {
-	width: 50px;
-	height: 50px;
-	line-height: 45px;
-	display: block;
-	font-size: 20px;
-	color: #ffffff;
-	background: lightgray;
-	border-radius: 50%;
-	margin: 0 auto 10px auto;
-	padding: 2px
+    width: 30px;
+    height: 30px;
+    line-height: 25px;
+    display: block;
+    font-size: 14px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 3px auto;
+    padding: 2px;
 }
 
 #progressbar li:after {
@@ -125,13 +132,13 @@ h2{
 	background: lightgray;
 	position: absolute;
 	left: 0;
-	top: 25px;
+	top: 15px;
 	z-index: -1
 }
 
 #progressbar li.active:before,
 #progressbar li.active:after {
-	background: #2F8D46
+	background: #4e73df;
 }
 
 .progress {
