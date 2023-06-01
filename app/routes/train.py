@@ -3,13 +3,33 @@ import os
 import pandas as pd
 from flask import Blueprint, render_template, request, redirect, url_for, Response
 
-from contextlib import redirect_stderr
+from autogluon.tabular import TabularPredictor
+from autogluon.common.utils import log_utils
+import logging
 
 from sklearn.model_selection import train_test_split
 
 import app.config as config
 
 train_bp = Blueprint('train', __name__, url_prefix='/')
+
+
+def logging_init(log_path):
+    formatter = logging.Formatter(
+        "{asctime}.{msecs:03.0f} {levelname:8} {message}",
+        datefmt="%H:%M:%S",
+        style="{",
+    )
+
+    file_handler = logging.FileHandler(log_path)
+    file_handler.setFormatter(formatter)
+
+    root_logger = logging.getLogger()
+    root_logger.addHandler(file_handler)
+    root_logger.setLevel(logging.INFO)
+    log_utils._logger_ag.propagate = True
+
+    return root_logger
 
 
 @train_bp.route('/<string:filename>/train_log')
@@ -58,11 +78,13 @@ def renderTrain(filename):
                 df_train.to_parquet(os.path.join(file_root, 'interim', 'train.parquet'))
                 df_test.to_parquet(os.path.join(file_root, 'interim', 'test.parquet'))
 
-                with open(os.path.join(config.UPLOAD_FOLDER, filename, "logs", "file"), 'w') as f:
-                    with redirect_stderr(f):
-                        from autogluon.tabular import TabularPredictor
-                        predictor = TabularPredictor(label=label, path=os.path.join(file_root, 'AutoGluon')).fit(df_train, time_limit=time)  # Fit models for 120s
-                leaderboard = predictor.leaderboard(df_test)
+                log_path = os.path.join(config.UPLOAD_FOLDER, filename, "logs", "file")
+                if os.path.exists(log_path):
+                    os.remove(log_path)
+
+                root_logger = logging_init(log_path)
+                predictor = TabularPredictor(label=label, path=os.path.join(file_root, 'AutoGluon')).fit(df_train, time_limit=time)  # Fit models for 120s
+                root_logger.setLevel(0)
 
                 return redirect(url_for('evaluate.renderEvaluate', filename=filename))
 

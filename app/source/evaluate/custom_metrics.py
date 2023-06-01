@@ -43,8 +43,7 @@ ag_mean_absolute_percentage_error = make_scorer(name='mean_absolute_percentage_e
                                            optimum=0,
                                            greater_is_better=False)
 
-classification_metrics = [ag_accuracy_score,
-                          ag_precision_score,
+classification_metrics = [ag_precision_score,
                           ag_recall_score,
                           ag_f1_score,
                           ag_roc_auc_score]
