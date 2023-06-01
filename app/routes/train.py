@@ -1,7 +1,7 @@
 import os
 
 import pandas as pd
-from flask import Blueprint, render_template, request, redirect, url_for, Response
+from flask import Blueprint, render_template, request, redirect, url_for, Response, g
 
 from autogluon.tabular import TabularPredictor
 from autogluon.common.utils import log_utils
@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 
 import app.config as config
 
-train_bp = Blueprint('train', __name__, url_prefix='/')
+train_bp = Blueprint('train', __name__, url_prefix='/train')
 
 
 def logging_init(log_path):
@@ -45,12 +45,14 @@ def content(filename):
     return Response(inner(), mimetype='text/html')
 
 
-@train_bp.route('/<string:filename>/model', methods=['GET', 'POST'])
+@train_bp.route('/<string:filename>/', methods=['GET', 'POST'])
 def renderTrain(filename):
+    g.filename = filename
     file_root = os.path.join(config.UPLOAD_FOLDER, filename)
     file_path = os.path.join(file_root, 'versions')
     file_path_parquet = os.path.join(file_path, filename + '.parquet')
     file_path_history = os.path.join(file_path, 'history.parquet')
+    model_path = os.path.join(file_root, 'AutoGluon')
 
     # read history logs
     history = pd.read_parquet(file_path_history)
@@ -83,7 +85,17 @@ def renderTrain(filename):
                     os.remove(log_path)
 
                 root_logger = logging_init(log_path)
-                predictor = TabularPredictor(label=label, path=os.path.join(file_root, 'AutoGluon')).fit(df_train, time_limit=time)  # Fit models for 120s
+                predictor = TabularPredictor(label=label, path=model_path).fit(df_train, time_limit=time)
+
+                print("Calculating Feature Importance")
+                fs_path = os.path.join(model_path, 'feature_importance')
+
+                if not os.path.exists(fs_path):
+                    os.makedirs(fs_path)
+
+                feature_importance = predictor.feature_importance(df_test)
+                feature_importance.reset_index().to_parquet(os.path.join(fs_path, 'fs.parquet'))
+
                 root_logger.setLevel(0)
 
                 return redirect(url_for('evaluate.renderEvaluate', filename=filename))

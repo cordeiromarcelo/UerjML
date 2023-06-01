@@ -2,7 +2,7 @@ import os
 import shutil
 
 import pandas as pd
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, g
 
 import app.config as config
 
@@ -11,6 +11,7 @@ index_bp = Blueprint('index', __name__, url_prefix='/')
 
 @index_bp.route('/')
 def index():
+    g.filename = ''
     saved_dfs = os.listdir(config.UPLOAD_FOLDER)
     return render_template('platform/index.html', saved_dfs=saved_dfs)
 

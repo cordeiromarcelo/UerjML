@@ -1,21 +1,12 @@
 
 {% extends "base.html" %}
-{% block title %}Table{% endblock %}
+{% block title %}Treino{% endblock %}
 
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/css/bootstrap-select.min.css">
-{% endblock %}
-
-{% block steps %}
-    <ul id="progressbar">
-        <li class="active" id="step1"><strong>Upload de Dados</strong></li>
-        <li class="active" id="step2"><strong>Tratamento de Dados</strong></li>
-        <li class="active" id="step3"><strong>Treino de Modelo</strong></li>
-        <li id="step4"><strong>Avaliar e Prever</strong></li>
-    </ul>
 {% endblock %}
 
 {% block action %}
@@ -231,6 +222,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"></script>
 
     <script>
+        document.getElementById("step2").classList.add('active');
+        document.getElementById("step3").classList.add('active');
+    </script>
+
+    <script>
         $('#sortTable').DataTable();
     </script>
 
@@ -264,10 +260,6 @@
 // ]]></script>
 
     <script>
-
-    </script>
-
-    <script>
     // Script that opens Params Modal and Display Errors
     $(document).ready(function() {
         const modal_div = $("#form-div");
@@ -278,6 +270,7 @@
         }
     });
     </script>
+
     <script>
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

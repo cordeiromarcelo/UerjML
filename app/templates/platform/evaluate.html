@@ -1,13 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Table{% endblock %}
+{% block title %}Avaliação{% endblock %}
 
-{% block steps %}
-    <ul id="progressbar">
-        <li class="active" id="step1"><strong>Upload de Dados</strong></li>
-        <li class="active" id="step2"><strong>Tratamento de Dados</strong></li>
-        <li class="active" id="step3"><strong>Treino de Modelo</strong></li>
-        <li class="active" id="step4"><strong>Avaliar e Prever</strong></li>
-    </ul>
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
 {% endblock %}
 
 {% block action %}
@@ -25,11 +22,90 @@
 
 {% block content %}
     <div class="container-fluid">
+        <!-- Cards Superiores-->
         <div class="row">
+
+            <!--Melhor Modelo-->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Melhor Modelo</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ best_model }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Eval Metric -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Métrica Avaliada</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ eval_metric }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Score Val-->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Score de Validação</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ score_val }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Score Test-->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Score de Teste</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ score_test }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tabelas -->
+        <div class="row">
+            <!-- Performance de Modelos -->
             <div class="col-12 col-md-8">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Dados Importados</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Performance de Modelos</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive text-nowrap">
@@ -58,6 +134,64 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Feature Importance -->
+            <div class="col-12 col-md-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Feature Importance</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive text-nowrap">
+                            <table class="table table-bordered table-hover" id="sortTable2">
+                                {% if len(leaderboard_row) == 1000 %}
+                                <caption>Somente as primeiras 1000 linhas</caption>
+                                {% endif %}
+                                <thead>
+                                <tr>
+                                    {% for col in fs_columns %}
+                                    <th>{{col}}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in fs_row %}
+                                <tr>
+                                    {% for col, row_ in zip(fs_columns, row) %}
+                                    <td>{{row_}}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"></script>
+
+    <script>
+        document.getElementById("step2").classList.add('active');
+        document.getElementById("step3").classList.add('active');
+        document.getElementById("step4").classList.add('active');
+    </script>
+
+    <script>
+        $('#sortTable').DataTable({
+        order: [[1, 'desc']],
+        });
+
+        $('#sortTable2').DataTable({
+        order: [[1, 'desc']],
+        });
+
+    </script>
 {% endblock %}

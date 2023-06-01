@@ -1,18 +1,19 @@
 import os
 
 import pandas as pd
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, g
 
 import app.config as config
 from app.source import utils
 from app.source.preprocessing import preprocessing
 
-preprocess_bp = Blueprint('preprocess', __name__, url_prefix='/')
+preprocess_bp = Blueprint('preprocess', __name__, url_prefix='/preprocess')
 
 
 @preprocess_bp.route('/<string:filename>/', methods=['GET', 'POST'])
 def renderPreprocessing(filename):
     # file paths
+    g.filename = filename
     file_path = os.path.join(config.UPLOAD_FOLDER, filename, 'versions')
     file_path_parquet = os.path.join(file_path, filename + '.parquet')
     file_path_history = os.path.join(file_path, 'history.parquet')

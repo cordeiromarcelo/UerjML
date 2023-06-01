@@ -1,6 +1,6 @@
 
 {% extends "base.html" %}
-{% block title %}Table{% endblock %}
+{% block title %}Upload{% endblock %}
 
 {% block steps %}
     <ul id="progressbar">
@@ -39,7 +39,7 @@
               <div class="accordion-body" id="accordionLoad">
                   <div class="list-group overflow-auto shadow" style="max-height: 220px;">
                       {% for col in saved_dfs %}
-                          <a href="{{col}}" class="list-group-item list-group-item-action">{{col}}</a>
+                          <a href="preprocess/{{col}}" class="list-group-item list-group-item-action">{{col}}</a>
                       {% endfor %}
                   </div>
               </div>

@@ -1,6 +1,6 @@
-
 {% extends "base.html" %}
-{% block title %}Table{% endblock %}
+
+{% block title %}Pre-processamento{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -9,21 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/css/bootstrap-select.min.css">
 {% endblock %}
 
-{% block steps %}
-    <ul id="progressbar">
-        <li class="active" id="step1"><strong>Upload de Dados</strong></li>
-        <li class="active" id="step2"><strong>Tratamento de Dados</strong></li>
-        <li id="step3"><strong>Treino de Modelo</strong></li>
-        <li id="step4"><strong>Avaliar e Prever</strong></li>
-    </ul>
-{% endblock %}
-
 {% block action %}
     <h1 class="display-6 fw-normal">Tratamento de Dados</h1>
     <p class="lead fw-normal">Selecione as colunas para receber o tratamento de sua escolha.</p>
     <div class="card-body" id="form-div">
         <form method="POST" action="" enctype="multipart/form-data">
             <div class="row mb-3">
+
+                 <!-- Seletor de Colunas -->
                 <div class="col">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
@@ -38,6 +31,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Seletor de Tratamento -->
                 <div class="col">
                     <div class="card shadow mb-4">
                         <div class="card-header font-weight-bold text-primary py-3">
@@ -57,6 +52,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modal que abre dependendo do tratamento -->
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -77,6 +74,8 @@
                 </div>
               </div>
             </div>
+
+            <!-- Botões do Form -->
             <button type="submit" name="action" value="undo" class="btn btn-secondary mb-3 px-5">Desfazer</button>
             <button type="submit" name="action" value="apply" class="btn btn-success mb-3 px-5">Aplicar</button>
         </form>
@@ -84,6 +83,8 @@
 {% endblock %}
 
 {% block right %}
+
+    <!-- Acordeão de ajuda -->
     <div class="row my-auto px-lg-5 px-md-0 px-3">
         <div class="card shadow accordion accordion-flush p-0" id="accordionFlushHelp">
           <div class="accordion-item">
@@ -102,6 +103,8 @@
           </div>
         </div>
     </div>
+
+    <!-- Botão de Avançar -->
     <div class="row align-self-end mt-2 me-4">
         <form method="POST" action="" enctype="multipart/form-data">
             <button type="submit" name="action" value="next" class="btn btn-lg btn-primary mb-4 px-4">Avançar <i class="bi bi-arrow-return-right"></i></button>
@@ -110,6 +113,8 @@
 {% endblock %}
 
 {% block left %}
+
+    <!-- Botão de Voltar -->
     <div class="row align-self-start ms-2 me-4 mt-auto">
         <form method="POST" action="" enctype="multipart/form-data">
             <button type="submit" name="action" value="back" class="btn btn-lg btn-primary mb-4 px-4"><i class="bi bi-arrow-return-left"></i> Voltar</button>
@@ -119,7 +124,10 @@
 
 {% block content %}
     <div class="container-fluid">
+       <!-- Tabelas -->
         <div class="row">
+
+            <!-- Dados Importados -->
             <div class="col-12 col-md-8">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
@@ -152,6 +160,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Descrição, Tipos e Histórico -->
             <div class="col-12 col-md-4">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
@@ -163,6 +173,8 @@
                           </div>
                         </nav>
                     </div>
+
+                    <!-- Tabela de descrições -->
                     <div class="card-body tab-content" id="nav-tabContent">
                         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                             <div class="table-responsive text-nowrap">
@@ -186,6 +198,8 @@
                                 </table>
                             </div>
                         </div>
+
+                        <!-- Tabela de Tipos -->
                         <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                             <div class="table-responsive text-nowrap">
                                 <table class="table table-bordered table-hover">
@@ -208,6 +222,7 @@
                                 </table>
                             </div>
                         </div>
+                        <!-- Tabela de Histórico -->
                         <div class="tab-pane fade" id="nav-history" role="tabpanel" aria-labelledby="nav-history-tab">
                             <div class="table-responsive text-nowrap">
                                 <table class="table table-bordered table-hover">
@@ -243,6 +258,10 @@
     <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"></script>
+
+    <script>
+        document.getElementById("step2").classList.add('active');
+    </script>
 
     <script>
         $('#sortTable').DataTable();
