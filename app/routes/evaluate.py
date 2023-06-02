@@ -6,11 +6,13 @@ from flask import Blueprint, render_template, g
 from app.source.evaluate.custom_metrics import classification_metrics, regression_metrics
 import app.config as config
 
+from app.source.utils import manage_context, update_status
+
 evaluate_bp = Blueprint('evaluate', __name__, url_prefix='/evaluate')
 
 @evaluate_bp.route('/<string:filename>/', methods=['GET', 'POST'])
 def renderEvaluate(filename):
-    g.filename = filename
+    manage_context(filename, g)
     file_root = os.path.join(config.UPLOAD_FOLDER, filename)
     file_path = os.path.join(file_root, 'versions')
     model_path = os.path.join(file_root, 'AutoGluon')
@@ -37,6 +39,12 @@ def renderEvaluate(filename):
     best_model_row = leaderboard[leaderboard['model'] == best_model]
     score_test = round(best_model_row['score_test'].values[0], 3)
     score_val = round(best_model_row['score_val'].values[0], 3)
+
+    update_status(filename, {'train': True,
+                             'best_model': best_model,
+                             'train_metric': predictor.eval_metric,
+                             'train_score': score_test
+                             })
 
     return render_template('platform/evaluate.html',
                            leaderboard_columns=leaderboard.columns.values,

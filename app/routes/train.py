@@ -10,6 +10,7 @@ import logging
 from sklearn.model_selection import train_test_split
 
 import app.config as config
+from app.source.utils import manage_context
 
 train_bp = Blueprint('train', __name__, url_prefix='/train')
 
@@ -47,7 +48,7 @@ def content(filename):
 
 @train_bp.route('/<string:filename>/', methods=['GET', 'POST'])
 def renderTrain(filename):
-    g.filename = filename
+    manage_context(filename, g)
     file_root = os.path.join(config.UPLOAD_FOLDER, filename)
     file_path = os.path.join(file_root, 'versions')
     file_path_parquet = os.path.join(file_path, filename + '.parquet')

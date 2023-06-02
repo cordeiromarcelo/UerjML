@@ -1,22 +1,23 @@
 import os
 import shutil
+import pickle
 
 import pandas as pd
 from flask import Blueprint, render_template, request, redirect, url_for, g
 
 import app.config as config
 
-index_bp = Blueprint('index', __name__, url_prefix='/')
+upload_bp = Blueprint('upload', __name__, url_prefix='/upload')
 
 
-@index_bp.route('/')
+@upload_bp.route('/')
 def index():
     g.filename = ''
     saved_dfs = os.listdir(config.UPLOAD_FOLDER)
-    return render_template('platform/index.html', saved_dfs=saved_dfs)
+    return render_template('platform/upload.html', saved_dfs=saved_dfs)
 
 
-@index_bp.route("/", methods=['POST'])
+@upload_bp.route("/", methods=['POST'])
 def uploadFiles():
     # get the uploaded file
     uploaded_file = request.files['file']
@@ -26,6 +27,7 @@ def uploadFiles():
         filename = uploaded_file.filename.split('.')[0]
         root_path = os.path.join(config.UPLOAD_FOLDER, filename)
         file_path = os.path.join(root_path, 'versions')
+        log_path = os.path.join(root_path, 'logs')
         file_path_history = os.path.join(file_path, 'history.parquet')
 
         if os.path.exists(root_path):
@@ -34,6 +36,16 @@ def uploadFiles():
         os.makedirs(root_path)
         for folder_name in ['versions', 'logs', 'raw', 'interim']:
             os.makedirs(os.path.join(root_path, folder_name))
+
+        status = {'name': filename,
+                  'preprocessing': "0",
+                  'train': False,
+                  'best_model': False,
+                  'train_metric': False,
+                  'train_score': False}
+        with open(os.path.join(log_path, 'status'), 'wb') as f:
+            pickle.dump(status, f)
+        f.close()
 
         file_path_csv = os.path.join(root_path, 'raw', filename + '.csv')
         uploaded_file.save(file_path_csv)

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Main{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
+{% endblock %}
+
+{% block action %}
+    <h1 class="display-6 fw-normal">Uerj ML</h1>
+    <div class="my-4 mb-1">
+        <p class="lead fw-normal">Gerencie seus projetos da plataforma de Auto ML</p>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <!-- Upload and load cards-->
+        <div class="col-md-4 mx-auto">
+            <div class="row row-cols-1 row-cols-md-2">
+                <!-- Upload card -->
+                <div class="col mb-4">
+                    <div class="card h-100 menu-card shadow-sm">
+                        <div class="card-header text-center">
+                            <span class="fa fa-upload fa-5x"></span>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="card-title">Novo Projeto</h4>
+                            <p class="card-text">Faça o upload de uma tabela e comece um novo projeto</p>
+                            <a href="{{ url_for('upload.index') }}" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Load card -->
+                <div class="col mb-4">
+                    <div class="card h-100 menu-card shadow-sm">
+                        <div class="card-header text-center">
+                            <span class="fa fa-wrench fa-5x"></span>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="card-title">Abrir Projeto</h4>
+                            <p class="card-text">Abra um projeto e continue de onde parou</p>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- List Projects available-->
+        <div class="col-12 col-md-10 mx-auto">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Projetos</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-nowrap">
+                        <table class="table table-bordered table-hover" id="sortTable3">
+                            <thead>
+                            <tr>
+                                {% for col in dict_list[0].keys() %}
+                                    <th>{{ col }}</th>
+                                {% endfor %}
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for dict in dict_list %}
+                                <tr style="transform: rotate(0);">
+                                    {% for row_ in dict.values() %}
+                                        {% if row_ == False %}
+                                            <td>-</td>
+                                        {% else %}
+                                            <td>{{ row_ }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <td><a href="/preprocess/{{ dict.get('Nome') }}" class="stretched-link">Ok</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+        document.getElementById("step1").classList.remove('active');
+    </script>
+
+    <script>
+        $('#sortTable3').DataTable({
+        order: [[6, 'desc']],
+        });
+    </script>
+
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+{% endblock %}

@@ -11313,3 +11313,12 @@ body.sidebar-toggled footer.sticky-footer {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.menu-card:hover {
+  background: rgba(78, 115, 223, 0.05);
+  box-shadow: 2px 4px 8px 0px rgba(46, 61, 73, 0.2)!important;
+}
+
+.menu-card {
+  transition: all 0.3s;
+}

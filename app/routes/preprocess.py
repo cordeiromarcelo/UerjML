@@ -7,13 +7,15 @@ import app.config as config
 from app.source import utils
 from app.source.preprocessing import preprocessing
 
+from app.source.utils import manage_context, update_status
+
 preprocess_bp = Blueprint('preprocess', __name__, url_prefix='/preprocess')
 
 
 @preprocess_bp.route('/<string:filename>/', methods=['GET', 'POST'])
 def renderPreprocessing(filename):
     # file paths
-    g.filename = filename
+    manage_context(filename, g)
     file_path = os.path.join(config.UPLOAD_FOLDER, filename, 'versions')
     file_path_parquet = os.path.join(file_path, filename + '.parquet')
     file_path_history = os.path.join(file_path, 'history.parquet')
@@ -46,6 +48,9 @@ def renderPreprocessing(filename):
                     ignore_index=True)
                 history.to_parquet(file_path_history)
 
+                # Update status of preprocessings
+                update_status(filename, {'preprocessing': len(history)})
+
                 # Save applied function to history
                 history_path_parquet = os.path.join(file_path, f'{filename}_{history.index[-1]}.parquet')
 
@@ -74,7 +79,7 @@ def renderPreprocessing(filename):
             return redirect(url_for('train.renderTrain', filename=filename))
 
         if request.form.get('action') == "back":
-            return redirect(url_for('index.uploadFiles', filename=filename))
+            return redirect(url_for('upload.uploadFiles', filename=filename))
 
     else:
         df = pd.read_parquet(file_path_parquet)
