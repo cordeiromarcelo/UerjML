@@ -11322,3 +11322,10 @@ body.sidebar-toggled footer.sticky-footer {
 .menu-card {
   transition: all 0.3s;
 }
+
+.list-group.recent-projects {
+  max-height: 300px;
+  margin-bottom: 10px;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}

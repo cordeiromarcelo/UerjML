@@ -25,17 +25,17 @@ def menu():
         with open(os.path.join(log_path, 'last_modified'), 'rb') as f:
             status.update({'last_updated': pickle.load(f).replace(microsecond=0)})
         f.close()
-
-        translate_map = {'name': 'Nome',
-                         'preprocessing': 'Preprocessamentos',
-                         'train': 'Treino',
-                         'best_model': 'Melhor Modelo',
-                         'train_metric': 'Métrica de Treino',
-                         'train_score': 'Score de Treino',
-                         'last_updated': 'Aberto em',
-                         }
-        for old, new in translate_map.items():
-            status[new] = status.pop(old)
+        #
+        # translate_map = {'name': 'Nome',
+        #                  'preprocessing': 'Preprocessamentos',
+        #                  'train': 'Treino',
+        #                  'best_model': 'Melhor Modelo',
+        #                  'train_metric': 'Métrica de Treino',
+        #                  'train_score': 'Score de Treino',
+        #                  'last_updated': 'Aberto em',
+        #                  }
+        # for old, new in translate_map.items():
+        #     status[new] = status.pop(old)
 
         dict_list.append(status)
 

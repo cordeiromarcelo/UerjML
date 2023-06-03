@@ -38,7 +38,7 @@ def uploadFiles():
             os.makedirs(os.path.join(root_path, folder_name))
 
         status = {'name': filename,
-                  'preprocessing': "0",
+                  'preprocessing': 0,
                   'train': False,
                   'best_model': False,
                   'train_metric': False,

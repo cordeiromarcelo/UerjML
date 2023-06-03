@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block action %}
+    <!-- Ações para o treinamento -->
     <h1 class="display-6 fw-normal">Treino de Modelo</h1>
     <p class="lead fw-normal">Selecione as colunas para receber o tratamento de sua escolha.</p>
     <div class="loader" id="loading"></div>
@@ -18,12 +19,16 @@
             <div class="row mb-3 justify-content-center">
                 <div class="col-6">
                     <div class="card shadow mb-4">
+
+                        <!-- Titulo Seleção do Target -->
                         <div class="card-header font-weight-bold text-primary py-3">
                             <label class="form-label" for="col">Target</label>
                             <i class="bi bi-info-circle-fill ms-1"
                             data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="left"
                             title="<b>Coluna <code>Target</code> do modelo</b>. Ou seja, a coluna que você deseja que seu modelo seja capaz de <b>prever</b>"></i>
                         </div>
+
+                        {# Seleção da Coluna #}
                         <div class="card-body">
                             <select class="selectpicker" title="Coluna a ser Prevista" name="col" id="col" data-actions-box="true" data-live-search="true" data-width="75%" data-dropup-auto="false" data-container="body" >
                                 {% for col in column_names %}
@@ -33,6 +38,8 @@
                         </div>
                     </div>
                 </div>
+
+                {# Input tempo de processamento #}
                 <div class="col-4">
                     <div class="card shadow mb-4">
                         <div class="card-header font-weight-bold text-primary py-3">
@@ -47,13 +54,15 @@
                     </div>
                 </div>
             </div>
+
+            {# Butão de Envio #}
             <button type="submit" name="action" value="apply" class="btn btn-success mb-3 px-5" onclick="loading();">Treinar</button>
         </form>
     </div>
 
 {% endblock %}
 
-{% block right %}
+{#{% block right %}
     <div class="row my-auto px-lg-5 px-md-0 px-3">
         <div class="card shadow accordion accordion-flush p-0" id="accordionFlushHelp">
           <div class="accordion-item">
@@ -72,9 +81,10 @@
           </div>
         </div>
     </div>
-{% endblock %}
+{% endblock %}#}
 
 {% block left %}
+    {# Botão de voltar #}
     <div class="row align-self-start ms-2 me-4 mt-auto">
         <form method="POST" action="" enctype="multipart/form-data">
             <button type="submit" name="action" value="back" class="btn btn-lg btn-primary mb-4 px-4"><i class="bi bi-arrow-return-left"></i> Voltar</button>
@@ -83,14 +93,15 @@
 {% endblock %}
 
 {% block content %}
+    {# Console #}
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12 col-md-8">
-                <div class="card-header py-1">
-                    <h6 class="m-0 font-weight-bold text-primary">Console</h6>
-                </div>
-                <div class="card shadow mb-4" style="max-height: 30vh; overflow-y: scroll;" id="log">
-                    <div class="card-body">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-white py-1">
+                        <h6 class="m-0 font-weight-bold text-primary">Console</h6>
+                    </div>
+                    <div class="card-body" style="max-height: 30vh; overflow-y: scroll;" id="log">
                         <p class="text-secondary" id="stdout"> > </p>
                     </div>
                 </div>

@@ -17,7 +17,7 @@
 {% block content %}
     <div class="container-fluid">
         <!-- Upload and load cards-->
-        <div class="col-md-4 mx-auto">
+        <div class="col-lg-6 col-md-8 mx-auto">
             <div class="row row-cols-1 row-cols-md-2">
                 <!-- Upload card -->
                 <div class="col mb-4">
@@ -50,38 +50,75 @@
         </div>
 
         <!-- List Projects available-->
-        <div class="col-12 col-md-10 mx-auto">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Projetos</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive text-nowrap">
-                        <table class="table table-bordered table-hover" id="sortTable3">
-                            <thead>
-                            <tr>
-                                {% for col in dict_list[0].keys() %}
-                                    <th>{{ col }}</th>
-                                {% endfor %}
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for dict in dict_list %}
-                                <tr style="transform: rotate(0);">
-                                    {% for row_ in dict.values() %}
-                                        {% if row_ == False %}
-                                            <td>-</td>
-                                        {% else %}
-                                            <td>{{ row_ }}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                    <td><a href="/preprocess/{{ dict.get('Nome') }}" class="stretched-link">Ok</a></td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+{#        <div class="col-12 col-md-10 mx-auto">#}
+{#            <div class="card shadow mb-4">#}
+{#                <div class="card-header py-3">#}
+{#                    <h6 class="m-0 font-weight-bold text-primary">Projetos</h6>#}
+{#                </div>#}
+{#                <div class="card-body">#}
+{#                    <div class="table-responsive text-nowrap">#}
+{#                        <table class="table table-bordered table-hover" id="sortTable3">#}
+{#                            <thead>#}
+{#                            <tr>#}
+{#                                {% for col in dict_list[0].keys() %}#}
+{#                                    <th>{{ col }}</th>#}
+{#                                {% endfor %}#}
+{#                                <th>Action</th>#}
+{#                            </tr>#}
+{#                            </thead>#}
+{#                            <tbody>#}
+{#                            {% for dict in dict_list %}#}
+{#                                <tr style="transform: rotate(0);">#}
+{#                                    {% for row_ in dict.values() %}#}
+{#                                        {% if row_ == False %}#}
+{#                                            <td>-</td>#}
+{#                                        {% else %}#}
+{#                                            <td>{{ row_ }}</td>#}
+{#                                        {% endif %}#}
+{#                                    {% endfor %}#}
+{#                                    <td><a href="/preprocess/{{ dict.get('Nome') }}" class="stretched-link">Ok</a></td>#}
+{#                                </tr>#}
+{#                            {% endfor %}#}
+{#                            </tbody>#}
+{#                        </table>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+        <div class="col-10 col-md-8 mx-auto mb-3">
+            <div class="card">
+                <div class="card-header d-flex">
+                    <div class="col">
+                        <h5 style="margin-top: 8px; margin-bottom: 0px">Projetos Recentes</h5>
                     </div>
+                    <div class="col">
+                        <input class="form-control" id="myInput" type="text" placeholder="Buscar..">
+                    </div>
+                </div>
+                <div class="list-group list-group-flush recent-projects" id="myList">
+                    {% for dict in dict_list|sort(attribute='last_updated', reverse=True) %}
+                    <a href="/preprocess/{{ dict.get('name') }}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ dict.get('name') }}</h5>
+                            <small>{{ dict.get('last_updated')}}</small>
+                        </div>
+                        <div class="d-flex">
+                        <p class="mb-1 mr-auto">
+                            <span>Modelo: <code>{{ dict.get('best_model') if dict.get('best_model')!=False else "não treinado"}}</code></span>
+                            {% if dict.get('train') != False %}
+                            <span>- {{ dict.get('train_metric') }}:  <code>{{ dict.get('train_score') }}</code></span>
+                            {% endif %}
+                        </p>
+                        <p href="#" class="btn-sm btn-primary" style="margin-bottom: 0px;">Go somewhere</p>
+                        </div>
+                        {% if dict.get('preprocessing') > 0 %}
+                        <small> <span class="badge badge-pill badge-secondary">Preprocessado</span></small>
+                        {% endif %}
+                        {% if dict.get('train') != False %}
+                        <small> <span class="badge badge-pill badge-primary">Treinado</span></small>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -100,6 +137,17 @@
     <script>
         $('#sortTable3').DataTable({
         order: [[6, 'desc']],
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myList a").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
         });
     </script>
 
