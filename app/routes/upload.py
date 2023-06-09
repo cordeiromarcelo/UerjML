@@ -9,7 +9,6 @@ import app.config as config
 
 upload_bp = Blueprint('upload', __name__, url_prefix='/upload')
 
-
 @upload_bp.route('/')
 def index():
     g.filename = ''

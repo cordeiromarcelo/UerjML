@@ -17,6 +17,7 @@ def fix_args_types(args_list):
 
 
 def manage_context(filename, g):
+    g.filename = filename
 
     last_modified = datetime.now()
 
@@ -24,8 +25,6 @@ def manage_context(filename, g):
     with open(os.path.join(log_path, 'last_modified'), 'wb') as f:
         pickle.dump(last_modified, f)
     f.close()
-
-    g.filename = filename
 
 
 def update_status(filename, update_dict):

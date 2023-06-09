@@ -16,6 +16,7 @@ preprocess_bp = Blueprint('preprocess', __name__, url_prefix='/preprocess')
 def renderPreprocessing(filename):
     # file paths
     manage_context(filename, g)
+    print(f"g.filename: {g.filename}")
     file_path = os.path.join(config.UPLOAD_FOLDER, filename, 'versions')
     file_path_parquet = os.path.join(file_path, filename + '.parquet')
     file_path_history = os.path.join(file_path, 'history.parquet')

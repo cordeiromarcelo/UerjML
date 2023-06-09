@@ -10461,11 +10461,25 @@ a:focus {
   height: 4.375rem;
   text-decoration: none;
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 600;
   padding: 1.5rem 1rem;
   text-align: center;
-  text-transform: uppercase;
   letter-spacing: 0.05rem;
+  z-index: 1;
+}
+
+.brand-text {
+  color:#4e73df;
+  text-decoration: none;
+  font-weight: 600!important;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  letter-spacing: 0.05rem;
+  z-index: 1;
+}
+
+.brand-logo {
+  color:#4e73df;
   z-index: 1;
 }
 
@@ -11328,4 +11342,15 @@ body.sidebar-toggled footer.sticky-footer {
   margin-bottom: 10px;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
+}
+
+.list-group.all-projects {
+  max-height: 600px;
+  margin-bottom: 10px;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.project-load-button {
+  background-color: #0d6efd;
 }

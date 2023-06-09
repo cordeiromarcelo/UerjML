@@ -9,6 +9,7 @@ pandas = "*"
 numpy = "*"
 pyarrow = "*"
 autogluon = "*"
+humanize = "*"
 
 [dev-packages]
 
