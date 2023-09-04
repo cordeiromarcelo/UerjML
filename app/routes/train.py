@@ -4,33 +4,13 @@ import pandas as pd
 from flask import Blueprint, render_template, request, redirect, url_for, Response, g
 
 from autogluon.tabular import TabularPredictor
-from autogluon.common.utils import log_utils
-import logging
 
 from sklearn.model_selection import train_test_split
 
 import app.config as config
-from app.source.utils import manage_context
+from app.source.utils import manage_context, logging_init
 
 train_bp = Blueprint('train', __name__, url_prefix='/train')
-
-
-def logging_init(log_path):
-    formatter = logging.Formatter(
-        "{asctime}.{msecs:03.0f} {levelname:8} {message}",
-        datefmt="%H:%M:%S",
-        style="{",
-    )
-
-    file_handler = logging.FileHandler(log_path)
-    file_handler.setFormatter(formatter)
-
-    root_logger = logging.getLogger()
-    root_logger.addHandler(file_handler)
-    root_logger.setLevel(logging.INFO)
-    log_utils._logger_ag.propagate = True
-
-    return root_logger
 
 
 @train_bp.route('/<string:filename>/train_log')

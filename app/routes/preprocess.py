@@ -36,7 +36,7 @@ def renderPreprocessing(filename):
                 # Get the selected function and apply
                 extra_args = utils.fix_args_types(request.form.getlist('args'))
                 args = [df, request.form.getlist('col')] + extra_args
-                print(args)
+                print('args:', args[2:])
 
                 selected_function = preprocessing.name_funcs_dict[request.values['process']]
                 df = selected_function(*args)
@@ -44,7 +44,8 @@ def renderPreprocessing(filename):
                 # Append applied function to history and save to parquet
                 history = history.append(
                     {'Tratamento': selected_function.name,
-                     'Coluna': request.form.getlist('col')
+                     'Coluna': request.form.getlist('col'),
+                     'Args': args[2:]
                      },
                     ignore_index=True)
                 history.to_parquet(file_path_history)

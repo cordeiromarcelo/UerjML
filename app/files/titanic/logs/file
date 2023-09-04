@@ -1,0 +1,134 @@
+09:24:32.650 INFO     Beginning AutoGluon training ... Time limit = 120s
+09:24:32.651 INFO     AutoGluon will save models to "C:\Users\Marcelo\PycharmProjects\UerjML\app\files\titanic\AutoGluon\"
+09:24:32.651 INFO     AutoGluon Version:  0.6.1
+09:24:32.651 INFO     Python Version:     3.9.13
+09:24:32.651 INFO     Operating System:   Windows
+09:24:32.651 INFO     Platform Machine:   AMD64
+09:24:32.651 INFO     Platform Version:   10.0.19045
+09:24:32.651 INFO     Train Data Rows:    596
+09:24:32.651 INFO     Train Data Columns: 7
+09:24:32.651 INFO     Label Column: Survived
+09:24:32.651 INFO     Preprocessing data ...
+09:24:32.651 Level 25 AutoGluon infers your prediction problem is: 'binary' (because only two unique label-values observed).
+09:24:32.652 INFO     	2 unique label values:  [0, 1]
+09:24:32.652 Level 25 	If 'binary' is not the correct problem_type, please manually specify the problem_type parameter during predictor init (You may specify problem_type as one of: ['binary', 'multiclass', 'regression'])
+09:24:32.654 INFO     Selected class <--> label mapping:  class 1 = 1, class 0 = 0
+09:24:32.654 INFO     Using Feature Generators to preprocess the data ...
+09:24:32.655 INFO     Fitting AutoMLPipelineFeatureGenerator...
+09:24:32.661 INFO     	Available Memory:                    6322.96 MB
+09:24:32.661 INFO     	Train Data (Original)  Memory Usage: 0.1 MB (0.0% of available memory)
+09:24:32.661 INFO     	Inferring data type of each feature based on column values. Set feature_metadata_in to manually specify special dtypes of the features.
+09:24:32.669 INFO     	Stage 1 Generators:
+09:24:32.669 INFO     		Fitting AsTypeFeatureGenerator...
+09:24:32.672 INFO     			Note: Converting 1 features to boolean dtype as they only contain 2 unique values.
+09:24:32.673 INFO     	Stage 2 Generators:
+09:24:32.673 INFO     		Fitting FillNaFeatureGenerator...
+09:24:32.675 INFO     	Stage 3 Generators:
+09:24:32.675 INFO     		Fitting IdentityFeatureGenerator...
+09:24:32.677 INFO     		Fitting CategoryFeatureGenerator...
+09:24:32.680 INFO     			Fitting CategoryMemoryMinimizeFeatureGenerator...
+09:24:32.682 INFO     	Stage 4 Generators:
+09:24:32.683 INFO     		Fitting DropUniqueFeatureGenerator...
+09:24:32.686 INFO     	Types of features in original data (raw dtype, special dtypes):
+09:24:32.686 INFO     		('float', [])  : 2 | ['Age', 'Fare']
+09:24:32.686 INFO     		('int', [])    : 3 | ['Pclass', 'SibSp', 'Parch']
+09:24:32.686 INFO     		('object', []) : 2 | ['Sex', 'Embarked']
+09:24:32.687 INFO     	Types of features in processed data (raw dtype, special dtypes):
+09:24:32.687 INFO     		('category', [])  : 1 | ['Embarked']
+09:24:32.687 INFO     		('float', [])     : 2 | ['Age', 'Fare']
+09:24:32.687 INFO     		('int', [])       : 3 | ['Pclass', 'SibSp', 'Parch']
+09:24:32.687 INFO     		('int', ['bool']) : 1 | ['Sex']
+09:24:32.687 INFO     	0.0s = Fit runtime
+09:24:32.687 INFO     	7 features in original data used to generate 7 features in processed data.
+09:24:32.688 INFO     	Train Data (Processed) Memory Usage: 0.03 MB (0.0% of available memory)
+09:24:32.689 INFO     Data preprocessing and feature engineering runtime = 0.04s ...
+09:24:32.689 Level 25 AutoGluon will gauge predictive performance using evaluation metric: 'accuracy'
+09:24:32.689 INFO     	To change this, specify the eval_metric parameter of Predictor()
+09:24:32.693 INFO     Automatically generating train/validation split with holdout_frac=0.2, Train Rows: 476, Val Rows: 120
+09:24:32.697 INFO     Fitting 13 L1 models ...
+09:24:32.697 INFO     Fitting model: KNeighborsUnif ... Training model for up to 119.96s of the 119.96s of remaining time.
+09:24:33.612 INFO     127.0.0.1 - - [04/Sep/2023 09:24:33] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:33.764 INFO     	0.6	 = Validation score   (accuracy)
+09:24:33.764 INFO     	1.05s	 = Training   runtime
+09:24:33.764 INFO     	0.01s	 = Validation runtime
+09:24:33.765 INFO     Fitting model: KNeighborsDist ... Training model for up to 118.89s of the 118.89s of remaining time.
+09:24:33.782 INFO     	0.6083	 = Validation score   (accuracy)
+09:24:33.783 INFO     	0.01s	 = Training   runtime
+09:24:33.783 INFO     	0.01s	 = Validation runtime
+09:24:33.783 INFO     Fitting model: LightGBMXT ... Training model for up to 118.88s of the 118.87s of remaining time.
+09:24:34.531 INFO     	0.8417	 = Validation score   (accuracy)
+09:24:34.531 INFO     	0.74s	 = Training   runtime
+09:24:34.531 INFO     	0.01s	 = Validation runtime
+09:24:34.532 INFO     Fitting model: LightGBM ... Training model for up to 118.13s of the 118.13s of remaining time.
+09:24:34.609 INFO     127.0.0.1 - - [04/Sep/2023 09:24:34] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:34.827 INFO     	0.85	 = Validation score   (accuracy)
+09:24:34.827 INFO     	0.29s	 = Training   runtime
+09:24:34.827 INFO     	0.01s	 = Validation runtime
+09:24:34.828 INFO     Fitting model: RandomForestGini ... Training model for up to 117.83s of the 117.83s of remaining time.
+09:24:35.278 INFO     	0.8083	 = Validation score   (accuracy)
+09:24:35.278 INFO     	0.4s	 = Training   runtime
+09:24:35.278 INFO     	0.04s	 = Validation runtime
+09:24:35.289 INFO     Fitting model: RandomForestEntr ... Training model for up to 117.37s of the 117.37s of remaining time.
+09:24:35.627 INFO     127.0.0.1 - - [04/Sep/2023 09:24:35] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:35.717 INFO     	0.7917	 = Validation score   (accuracy)
+09:24:35.717 INFO     	0.37s	 = Training   runtime
+09:24:35.717 INFO     	0.04s	 = Validation runtime
+09:24:35.725 INFO     Fitting model: CatBoost ... Training model for up to 116.93s of the 116.93s of remaining time.
+09:24:36.605 INFO     127.0.0.1 - - [04/Sep/2023 09:24:36] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:37.603 INFO     127.0.0.1 - - [04/Sep/2023 09:24:37] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:38.600 INFO     127.0.0.1 - - [04/Sep/2023 09:24:38] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:39.600 INFO     127.0.0.1 - - [04/Sep/2023 09:24:39] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:40.599 INFO     127.0.0.1 - - [04/Sep/2023 09:24:40] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:41.611 INFO     127.0.0.1 - - [04/Sep/2023 09:24:41] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:42.604 INFO     127.0.0.1 - - [04/Sep/2023 09:24:42] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:43.289 INFO     	0.825	 = Validation score   (accuracy)
+09:24:43.289 INFO     	7.56s	 = Training   runtime
+09:24:43.289 INFO     	0.0s	 = Validation runtime
+09:24:43.291 INFO     Fitting model: ExtraTreesGini ... Training model for up to 109.37s of the 109.37s of remaining time.
+09:24:43.609 INFO     127.0.0.1 - - [04/Sep/2023 09:24:43] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:43.726 INFO     	0.775	 = Validation score   (accuracy)
+09:24:43.726 INFO     	0.38s	 = Training   runtime
+09:24:43.726 INFO     	0.04s	 = Validation runtime
+09:24:43.737 INFO     Fitting model: ExtraTreesEntr ... Training model for up to 108.92s of the 108.92s of remaining time.
+09:24:44.172 INFO     	0.7667	 = Validation score   (accuracy)
+09:24:44.172 INFO     	0.37s	 = Training   runtime
+09:24:44.172 INFO     	0.04s	 = Validation runtime
+09:24:44.180 INFO     Fitting model: NeuralNetFastAI ... Training model for up to 108.48s of the 108.48s of remaining time.
+09:24:44.599 INFO     127.0.0.1 - - [04/Sep/2023 09:24:44] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:45.387 INFO     	0.8417	 = Validation score   (accuracy)
+09:24:45.387 INFO     	1.14s	 = Training   runtime
+09:24:45.387 INFO     	0.05s	 = Validation runtime
+09:24:45.388 INFO     Fitting model: XGBoost ... Training model for up to 107.27s of the 107.27s of remaining time.
+09:24:45.598 INFO     127.0.0.1 - - [04/Sep/2023 09:24:45] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:45.678 INFO     	0.8167	 = Validation score   (accuracy)
+09:24:45.678 INFO     	0.28s	 = Training   runtime
+09:24:45.678 INFO     	0.0s	 = Validation runtime
+09:24:45.679 INFO     Fitting model: NeuralNetTorch ... Training model for up to 106.98s of the 106.98s of remaining time.
+09:24:46.599 INFO     127.0.0.1 - - [04/Sep/2023 09:24:46] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:47.600 INFO     127.0.0.1 - - [04/Sep/2023 09:24:47] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:48.600 INFO     127.0.0.1 - - [04/Sep/2023 09:24:48] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:48.659 INFO     	0.8417	 = Validation score   (accuracy)
+09:24:48.659 INFO     	2.93s	 = Training   runtime
+09:24:48.659 INFO     	0.05s	 = Validation runtime
+09:24:48.660 INFO     Fitting model: LightGBMLarge ... Training model for up to 104.0s of the 104.0s of remaining time.
+09:24:49.569 INFO     	0.825	 = Validation score   (accuracy)
+09:24:49.569 INFO     	0.8s	 = Training   runtime
+09:24:49.569 INFO     	0.01s	 = Validation runtime
+09:24:49.578 INFO     Fitting model: WeightedEnsemble_L2 ... Training model for up to 119.96s of the 103.08s of remaining time.
+09:24:49.600 INFO     127.0.0.1 - - [04/Sep/2023 09:24:49] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:49.926 INFO     	0.85	 = Validation score   (accuracy)
+09:24:49.926 INFO     	0.34s	 = Training   runtime
+09:24:49.926 INFO     	0.0s	 = Validation runtime
+09:24:49.928 INFO     AutoGluon training complete, total runtime = 17.28s ... Best model: "WeightedEnsemble_L2"
+09:24:49.933 INFO     TabularPredictor saved. To load, use: predictor = TabularPredictor.load("C:\Users\Marcelo\PycharmProjects\UerjML\app\files\titanic\AutoGluon\")
+09:24:49.936 INFO     Computing feature importance via permutation shuffling for 7 features using 295 rows with 5 shuffle sets...
+09:24:49.946 INFO     	0.4s	= Expected runtime (0.08s per shuffle set)
+09:24:50.065 INFO     	0.13s	= Actual runtime (Completed 5 of 5 shuffle sets)
+09:24:50.072 INFO     127.0.0.1 - - [04/Sep/2023 09:24:50] "[32mPOST /train/titanic/ HTTP/1.1[0m" 302 -
+09:24:50.599 INFO     127.0.0.1 - - [04/Sep/2023 09:24:50] "GET /train/titanic/train_log HTTP/1.1" 200 -
+09:24:50.664 INFO     127.0.0.1 - - [04/Sep/2023 09:24:50] "GET /evaluate/titanic/ HTTP/1.1" 200 -
+09:24:50.676 INFO     127.0.0.1 - - [04/Sep/2023 09:24:50] "[36mGET /static/css/table.css HTTP/1.1[0m" 304 -
+09:24:50.677 INFO     127.0.0.1 - - [04/Sep/2023 09:24:50] "[36mGET /static/css/stepbar.css HTTP/1.1[0m" 304 -
+09:24:50.681 INFO     127.0.0.1 - - [04/Sep/2023 09:24:50] "[36mGET /static/css/dashboard.css HTTP/1.1[0m" 304 -
+09:24:50.683 INFO     127.0.0.1 - - [04/Sep/2023 09:24:50] "[36mGET /static/vendor/fontawesome/css/all.css HTTP/1.1[0m" 304 -
+09:24:50.684 INFO     127.0.0.1 - - [04/Sep/2023 09:24:50] "[36mGET /static/js/uerjml.js HTTP/1.1[0m" 304 -

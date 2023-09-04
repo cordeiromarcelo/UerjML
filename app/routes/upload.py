@@ -33,18 +33,8 @@ def uploadFiles():
             shutil.rmtree(root_path)
 
         os.makedirs(root_path)
-        for folder_name in ['versions', 'logs', 'raw', 'interim']:
+        for folder_name in ['versions', 'logs', 'raw', 'interim', 'predictions']:
             os.makedirs(os.path.join(root_path, folder_name))
-
-        status = {'name': filename,
-                  'preprocessing': 0,
-                  'train': False,
-                  'best_model': False,
-                  'train_metric': False,
-                  'train_score': False}
-        with open(os.path.join(log_path, 'status'), 'wb') as f:
-            pickle.dump(status, f)
-        f.close()
 
         file_path_csv = os.path.join(root_path, 'raw', filename + '.csv')
         uploaded_file.save(file_path_csv)
@@ -55,6 +45,18 @@ def uploadFiles():
 
         history = pd.DataFrame()
         history.to_parquet(file_path_history)
+
+        status = {'name': filename,
+                  'original_columns': df.columns,
+                  'preprocessing': 0,
+                  'train': False,
+                  'best_model': False,
+                  'train_metric': False,
+                  'train_score': False}
+
+        with open(os.path.join(log_path, 'status'), 'wb') as f:
+            pickle.dump(status, f)
+        f.close()
 
     else:
         raise Exception('O arquivo não possui nome')

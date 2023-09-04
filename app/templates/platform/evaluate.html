@@ -6,12 +6,45 @@
 {% endblock %}
 
 {% block action %}
-    <h1 class="display-6 fw-normal">Upload de Dados de Treino</h1>
+    <h1 class="display-6 fw-normal">Avaliação e Previsão</h1>
     <div class="my-4 mb-5">
         <p class="lead fw-normal">Envie seu arquivo em formato CSV que será usado para previsões</p>
         <div class="card-body">
             <form method="POST" action="" enctype="multipart/form-data">
-                <input type="file" name="file" class="form-control form-control-lg mb-3" id="customFile", onchange="$('#upload-file-info').text(this.files[0].name)">
+                <div class="row mb-3">
+                    <input type="file" name="file" class="form-control form-control-lg mb-3" id="customFile" onchange="$('#upload-file-info').text(this.files[0].name)">
+                </div>
+                <div class="row mb-3">
+                    <!-- Seletor de Tipo de Classificação -->
+                    <div class="col">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <label class="form-label font-weight-bold text-primary" for="col">Tipo de previsão</label>
+                            </div>
+                            <div class="card-body">
+                                <select class="selectpicker" title="Tipo de previsão" name="predict" id="predict" data-actions-box="true" data-width="75%" data-dropup-auto="false" data-container="body" >
+                                    <option value="predict" selected="selected">Classificação</option>
+                                    <option value="predict_proba">Probabilidade</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Seletor de Coluna -->
+                    <div class="col">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <label class="form-label font-weight-bold text-primary" for="col">Manter Colunas</label>
+                            </div>
+                            <div class="card-body">
+                                <select class="selectpicker" title="Coluna(s) para manter" multiple name="col" id="col" data-actions-box="true" data-live-search="true" data-selected-text-format="count" data-width="75%" data-dropup-auto="false" data-container="body" >
+                                    {% for col in original_columns %}
+                                    <option value="{{col}}">{{col}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <button type="submit" name="action" value="Submit" class="btn btn-primary px-5">Enviar</button>
             </form>
     </div>

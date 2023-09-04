@@ -1,20 +1,25 @@
 import os
 
 import pandas as pd
-from flask import Blueprint, render_template, g
+from flask import Blueprint, render_template, g, request, send_file
 
 from app.source.evaluate.custom_metrics import classification_metrics, regression_metrics
+from app.source.preprocessing import preprocessing
+
 import app.config as config
 
-from app.source.utils import manage_context, update_status
+from app.source.utils import manage_context, update_status, get_status
 
 evaluate_bp = Blueprint('evaluate', __name__, url_prefix='/evaluate')
+
 
 @evaluate_bp.route('/<string:filename>/', methods=['GET', 'POST'])
 def renderEvaluate(filename):
     manage_context(filename, g)
+
     file_root = os.path.join(config.UPLOAD_FOLDER, filename)
     file_path = os.path.join(file_root, 'versions')
+    predictions_path = os.path.join(file_root, 'predictions')
     model_path = os.path.join(file_root, 'AutoGluon')
 
     from autogluon.tabular import TabularPredictor
@@ -46,6 +51,41 @@ def renderEvaluate(filename):
                              'train_score': score_test
                              })
 
+    original_columns = get_status(filename, "original_columns")
+
+    if request.method == 'POST':
+
+        file_path_history = os.path.join(file_path, 'history.parquet')
+        file_path_prediction = os.path.join(predictions_path, 'prediction.csv')
+        file_path_csv = os.path.join(file_root, 'raw', filename + '_test.csv')
+
+        uploaded_file = request.files['file']
+        uploaded_file.save(file_path_csv)
+
+        df = pd.read_csv(file_path_csv, encoding='unicode_escape')
+        history = pd.read_parquet(file_path_history)
+
+        cols = request.form.get('col')
+
+        if cols is not None:
+            if not isinstance(cols, list):
+                cols = [cols]
+            result = df[cols]
+
+        for index, row in history.iterrows():
+            selected_function = preprocessing.name_funcs_dict[row['Tratamento']]
+            df = selected_function(df, row['Coluna'].tolist(), *row['Args'])
+
+        pred = getattr(predictor, request.form.get('predict'))(df)
+
+        if cols is None:
+            result = pd.DataFrame(pred)
+        else:
+            result[predictor.label] = pred.values
+
+        result.to_csv(file_path_prediction, index=False)
+        return send_file(file_path_prediction, as_attachment=True)
+
     return render_template('platform/evaluate.html',
                            leaderboard_columns=leaderboard.columns.values,
                            leaderboard_row=list(leaderboard.values)[:1000],
@@ -55,4 +95,5 @@ def renderEvaluate(filename):
                            eval_metric=eval_metric,
                            score_test=score_test,
                            score_val=score_val,
+                           original_columns=original_columns,
                            zip=zip, len=len, str=str, list=list)

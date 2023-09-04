@@ -1,0 +1,6 @@
+flask
+pandas
+numpy
+pyarrow
+autogluon
+scikit-learn
