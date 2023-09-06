@@ -13,7 +13,7 @@
     <div class="loader" id="loading"></div>
     <div class="card-body" id="form-div">
         <form method="POST" action="" enctype="multipart/form-data">
-            <div class="row mb-3 justify-content-center">
+            <div class="row mb-1 justify-content-center">
                 <div class="col-6">
                     <div class="card shadow mb-4">
 
@@ -49,6 +49,17 @@
                             <input class="form-control" value="120" autocomplete="off" title="Segundos de Treinamento" name="process" id="process" data-width="75%" data-dropup-auto="false" data-container="body">
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="true" id="split" name="split">
+                    <label class="form-check-label" for="split">
+                    Dividir em Treino e Teste
+                    </label>
+                    <i class="bi bi-info-circle-fill ms-1"
+                    data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="left"
+                    title="<b>Divide <code>75%</code> dos dados para treino e <code>25%</code> para teste</b>, possibilitando melhor avaliação do resultado. O modelo final usado para previsão possuirá apenas os dados do treino."></i>
                 </div>
             </div>
 

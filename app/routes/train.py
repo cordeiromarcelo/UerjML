@@ -8,7 +8,7 @@ from autogluon.tabular import TabularPredictor
 from sklearn.model_selection import train_test_split
 
 import app.config as config
-from app.source.utils import manage_context, logging_init
+from app.source.utils import manage_context, logging_init, logging_close, update_status
 
 train_bp = Blueprint('train', __name__, url_prefix='/train')
 
@@ -53,20 +53,27 @@ def renderTrain(filename):
             try:
                 # Get the selected function and apply
                 label = request.values['col']
+                if not label:
+                    raise Exception("necessário escolher um target")
+
                 time = int(request.values['process'])
 
-                df_train, df_test = train_test_split(
-                    df, test_size=0.33, random_state=42)
+                if request.form.get('split') == "true":
+                    update_status(filename, {'split': True})
+                    df, df_test = train_test_split(
+                        df, test_size=0.33, random_state=42)
 
-                df_train.to_parquet(os.path.join(file_root, 'interim', 'train.parquet'))
-                df_test.to_parquet(os.path.join(file_root, 'interim', 'test.parquet'))
+                    df.to_parquet(os.path.join(file_root, 'interim', 'train.parquet'))
+                    df_test.to_parquet(os.path.join(file_root, 'interim', 'test.parquet'))
+                else:
+                    update_status(filename, {'split': False})
 
                 log_path = os.path.join(config.UPLOAD_FOLDER, filename, "logs", "file")
                 if os.path.exists(log_path):
                     os.remove(log_path)
 
                 root_logger = logging_init(log_path)
-                predictor = TabularPredictor(label=label, path=model_path).fit(df_train, time_limit=time)
+                predictor = TabularPredictor(label=label, path=model_path).fit(df, time_limit=time)
 
                 print("Calculating Feature Importance")
                 fs_path = os.path.join(model_path, 'feature_importance')
@@ -74,10 +81,10 @@ def renderTrain(filename):
                 if not os.path.exists(fs_path):
                     os.makedirs(fs_path)
 
-                feature_importance = predictor.feature_importance(df_test)
+                feature_importance = predictor.feature_importance(df)
                 feature_importance.reset_index().to_parquet(os.path.join(fs_path, 'fs.parquet'))
 
-                root_logger.setLevel(0)
+                logging_close(root_logger)
 
                 return redirect(url_for('evaluate.renderEvaluate', filename=filename))
 

@@ -50,6 +50,7 @@ def uploadFiles():
                   'original_columns': df.columns,
                   'preprocessing': 0,
                   'train': False,
+                  'split': False,
                   'best_model': False,
                   'train_metric': False,
                   'train_score': False}

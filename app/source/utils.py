@@ -67,3 +67,10 @@ def logging_init(log_path):
     log_utils._logger_ag.propagate = True
 
     return root_logger
+
+
+def logging_close(root_logger):
+    root_logger.setLevel(0)
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+        handler.close()

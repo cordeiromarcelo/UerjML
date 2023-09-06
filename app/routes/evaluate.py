@@ -22,9 +22,10 @@ def renderEvaluate(filename):
     predictions_path = os.path.join(file_root, 'predictions')
     model_path = os.path.join(file_root, 'AutoGluon')
 
+    split = get_status(filename, "split")
+
     from autogluon.tabular import TabularPredictor
     predictor = TabularPredictor.load(os.path.join(file_root, 'AutoGluon'))
-    df_test = pd.read_parquet(os.path.join(file_root, 'interim', 'test.parquet'))
 
     problem_type = predictor.problem_type
     eval_metric = predictor.eval_metric
@@ -37,18 +38,23 @@ def renderEvaluate(filename):
     else:
         extra_metrics = []
 
-    leaderboard = predictor.leaderboard(df_test,extra_metrics=extra_metrics, silent=True)
+    if split:
+        df_test = pd.read_parquet(os.path.join(file_root, 'interim', 'test.parquet'))
+        leaderboard = predictor.leaderboard(df_test, extra_metrics=extra_metrics, silent=True)
+    else:
+        leaderboard = predictor.leaderboard(silent=True)
+
     feature_importance = pd.read_parquet(os.path.join(model_path, 'feature_importance', 'fs.parquet'))
     best_model = predictor.get_model_best()
 
     best_model_row = leaderboard[leaderboard['model'] == best_model]
-    score_test = round(best_model_row['score_test'].values[0], 3)
+    score_test = round(best_model_row['score_test'].values[0], 3) if split else "-"
     score_val = round(best_model_row['score_val'].values[0], 3)
 
     update_status(filename, {'train': True,
                              'best_model': best_model,
                              'train_metric': predictor.eval_metric,
-                             'train_score': score_test
+                             'train_score': score_val if score_test == "-" else score_test
                              })
 
     original_columns = get_status(filename, "original_columns")
@@ -75,6 +81,11 @@ def renderEvaluate(filename):
         for index, row in history.iterrows():
             selected_function = preprocessing.name_funcs_dict[row['Tratamento']]
             df = selected_function(df, row['Coluna'].tolist(), *row['Args'])
+
+        if predictor.label in df.columns:
+            leaderboard = predictor.leaderboard(df, extra_metrics=extra_metrics, silent=True)
+            best_model_row = leaderboard[leaderboard['model'] == best_model]
+            score_test = round(best_model_row['score_test'].values[0], 3)
 
         pred = getattr(predictor, request.form.get('predict'))(df)
 

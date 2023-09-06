@@ -91,7 +91,7 @@ class RemoveNulls(Function):
 
 
 class ChangeType(Function):
-    def __call__(self, df: pd.DataFrame, columns: list[str], tipo: str, test: str) -> pd.DataFrame:
+    def __call__(self, df: pd.DataFrame, columns: list[str], tipo: str) -> pd.DataFrame:
         """
         Converte o tipo de dado das colunas selecionadas para o
         tipo de dado selecionado
