@@ -4,18 +4,20 @@ import pickle
 from datetime import datetime
 import humanize
 
-from flask import Blueprint, render_template, request, redirect, url_for, g
+from flask import Blueprint, render_template, g
 
 import app.config as config
 
 menu_bp = Blueprint('menu', __name__, url_prefix='/')
+
+os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
+saved_dfs = os.listdir(config.UPLOAD_FOLDER)
 
 @menu_bp.route('/')
 def menu():
 
     g.filename = ''
 
-    saved_dfs = os.listdir(config.UPLOAD_FOLDER)
     dict_list = []
     for filename in saved_dfs:
         log_path = os.path.join(config.UPLOAD_FOLDER, filename, 'logs')
@@ -47,7 +49,6 @@ def open_project():
 
     g.filename = ''
 
-    saved_dfs = os.listdir(config.UPLOAD_FOLDER)
     dict_list = []
     for filename in saved_dfs:
         log_path = os.path.join(config.UPLOAD_FOLDER, filename, 'logs')
