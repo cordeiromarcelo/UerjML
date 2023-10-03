@@ -174,3 +174,57 @@ class QueryFilter(Function):
             Col_B == `Col_C (cm^2)`
 
         """
+
+
+class ExecFunc(Function):
+    def __call__(self, df: pd.DataFrame, columns: list[str] = None, text: str = "") -> pd.DataFrame:
+        """
+        Avalie uma string descrevendo operações em colunas DataFrame.
+        Opera apenas em colunas, não em linhas ou elementos específicos.
+
+        Exemplos:
+            df.eval('C = A + B')
+            df.eval('A + B')
+            df.eval(
+                '''
+                C = A + B
+                D = A - B
+                '''
+            )
+
+        Parâmeteros
+        ----------
+        casas: int
+            Quantidade de casas decimais
+        """
+
+        df = df.copy()
+
+        exec(text)
+        return df
+
+    @property
+    def name(self) -> str:
+        return 'Executar Expressão'
+
+    @property
+    def category(self) -> str:
+        return 'Colunas'
+
+    @property
+    def options(self) -> dict[str:list]:
+        return None
+
+    @property
+    def description(self):
+        return 'Descreva a operação a ser realizada. Ex: df["col"] = 1'
+
+    @property
+    def help_txt(self) -> str:
+        return """Avalie uma string descrevendo qualquer operação em Python.
+        É necessário se referir ao Dataframe como df.
+
+        Exemplos:
+            df['col'] = 1
+            df.dropna(inplace=True)
+        """

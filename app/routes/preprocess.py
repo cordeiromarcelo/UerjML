@@ -36,31 +36,34 @@ def renderPreprocessing(filename):
                 # Get the selected function and apply
                 extra_args = utils.fix_args_types(request.form.getlist('args'))
                 args = [df, request.form.getlist('col')] + extra_args
-                print('args:', args[2:])
+                print('args:', args)
 
                 selected_function = preprocessing.name_funcs_dict[request.values['process']]
                 df = selected_function(*args)
+
+                # Save processed DF
+                temporary_path_parquet = os.path.join(file_path, f'{filename}_temp.parquet')
+                df.to_parquet(temporary_path_parquet)
 
                 # Append applied function to history and save to parquet
                 history = history.append(
                     {'Tratamento': selected_function.name,
                      'Coluna': request.form.getlist('col'),
-                     'Args': args[2:]
+                     'Args': [str(c) for c in args[2:]]
                      },
                     ignore_index=True)
                 history.to_parquet(file_path_history)
 
-                # Update status of preprocessings
-                update_status(filename, {'preprocessing': len(history)})
-
                 # Save applied function to history
                 history_path_parquet = os.path.join(file_path, f'{filename}_{history.index[-1]}.parquet')
 
-                # Keep track of old DF
+                # Keep track of old DF and update current df
                 os.rename(file_path_parquet, history_path_parquet)
+                os.rename(temporary_path_parquet, file_path_parquet)
 
-                # Save processed DF
-                df.to_parquet(file_path_parquet)
+                # Update status of preprocessings
+                update_status(filename, {'preprocessing': len(history)})
+
             except Exception as e:
                 error_msg += str(e)
 

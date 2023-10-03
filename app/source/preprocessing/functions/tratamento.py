@@ -4,7 +4,7 @@ from app.source.preprocessing.function_class import Function
 
 
 class FillNull(Function):
-    def __call__(self, df: pd.DataFrame, columns: list[str], preencher: str) -> pd.DataFrame:
+    def __call__(self, df: pd.DataFrame, columns: list[str], preencher) -> pd.DataFrame:
         """
         Preenche os valores nulos das colunas
         selecionadas com o método ou valor selecionado
@@ -23,6 +23,15 @@ class FillNull(Function):
             'Media': 'mean',
             'Moda': 'mode',
             'Mediana': 'median'
+        }
+
+        fill_dict = {
+            'None': None,
+            'False': False,
+            'True': True,
+            '0': 0,
+            '1': 1,
+            '-1': -1
         }
 
         if preencher in funcs_dict.keys():

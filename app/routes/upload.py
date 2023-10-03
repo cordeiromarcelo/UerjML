@@ -20,10 +20,10 @@ def index():
 def uploadFiles():
     # get the uploaded file
     uploaded_file = request.files['file']
+    filename = request.form.get('projectName')
 
-    if uploaded_file.filename != '':
+    if filename != '':
 
-        filename = uploaded_file.filename.split('.')[0]
         root_path = os.path.join(config.UPLOAD_FOLDER, filename)
         file_path = os.path.join(root_path, 'versions')
         log_path = os.path.join(root_path, 'logs')

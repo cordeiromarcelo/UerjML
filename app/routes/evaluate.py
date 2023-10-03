@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, g, request, send_file
 
 from app.source.evaluate.custom_metrics import classification_metrics, regression_metrics
 from app.source.preprocessing import preprocessing
+from app.source import utils
 
 import app.config as config
 
@@ -80,7 +81,7 @@ def renderEvaluate(filename):
 
         for index, row in history.iterrows():
             selected_function = preprocessing.name_funcs_dict[row['Tratamento']]
-            df = selected_function(df, row['Coluna'].tolist(), *row['Args'])
+            df = selected_function(df, row['Coluna'].tolist(), *utils.fix_args_types(row['Args']))
 
         if predictor.label in df.columns:
             leaderboard = predictor.leaderboard(df, extra_metrics=extra_metrics, silent=True)

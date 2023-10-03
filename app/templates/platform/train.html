@@ -217,7 +217,7 @@
                                     <tbody>
                                     {% for row in history_data %}
                                     <tr>
-                                        {% for col, row_ in zip(dtypes_columns, row) %}
+                                        {% for col, row_ in zip(history_columns, row) %}
                                         <td>{{row_}}</td>
                                         {% endfor %}
                                     </tr>

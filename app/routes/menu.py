@@ -10,13 +10,13 @@ import app.config as config
 
 menu_bp = Blueprint('menu', __name__, url_prefix='/')
 
-os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
-saved_dfs = os.listdir(config.UPLOAD_FOLDER)
-
 @menu_bp.route('/')
 def menu():
 
     g.filename = ''
+
+    os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
+    saved_dfs = os.listdir(config.UPLOAD_FOLDER)
 
     dict_list = []
     for filename in saved_dfs:
@@ -48,6 +48,8 @@ def menu():
 def open_project():
 
     g.filename = ''
+    os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
+    saved_dfs = os.listdir(config.UPLOAD_FOLDER)
 
     dict_list = []
     for filename in saved_dfs:

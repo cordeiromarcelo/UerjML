@@ -8,6 +8,12 @@
         <div class="card-body">
             <form method="POST" action="" enctype="multipart/form-data">
                 <input type="file" name="file" class="form-control form-control-lg mb-3" id="customFile", onchange="$('#upload-file-info').text(this.files[0].name)">
+                <div class="form-group row">
+                    <label for="projectName" class="col-sm-3 col-form-label">Nome do Projeto</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" id="projectName" name="projectName" type="text">
+                    </div>
+                </div>
                 <button type="submit" name="action" value="Submit" class="btn btn-primary px-5">Enviar</button>
             </form>
     </div>
