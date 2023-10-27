@@ -61,6 +61,9 @@ def logging_init(log_path):
     file_handler = logging.FileHandler(log_path)
     file_handler.setFormatter(formatter)
 
+    log = logging.getLogger('werkzeug')
+    log.disabled = True
+
     root_logger = logging.getLogger()
     root_logger.addHandler(file_handler)
     root_logger.setLevel(logging.INFO)
