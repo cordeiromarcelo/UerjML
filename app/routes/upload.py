@@ -43,8 +43,6 @@ def uploadFiles():
         file_path_parquet = os.path.join(file_path, filename + '.parquet')
         df.to_parquet(file_path_parquet)
 
-        df[[c1 + '_roll_mean' for c1 in df.columns[5:]]] = [df.groupby('location')[c2].transform(lambda s: s.rolling(2, min_periods=1).sum()) for c2 in df.columns[5:]]
-
         history = pd.DataFrame()
         history.to_parquet(file_path_history)
 
